@@ -1,0 +1,592 @@
+{
+  "@@locale": "en",
+  "appName": "Habito",
+  "tabToday": "Today",
+  "tabStats": "Stats",
+  "tabWidgets": "Widgets",
+  "tabSettings": "Settings",
+  "addHabit": "Add habit",
+  "greetingMorning": "Good morning, {name}",
+  "@greetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingAfternoon": "Good afternoon, {name}",
+  "@greetingAfternoon": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "greetingEvening": "Good evening, {name}",
+  "@greetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "savedOnPhoneOnly": "Saved on this phone only",
+  "waitingForInternet": "Waiting for internet",
+  "backupNeedsAttention": "Backup hasn't run for 3 days",
+  "backedUpJustNow": "Backed up just now",
+  "backedUpAt": "Backed up at {time}",
+  "@backedUpAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "emptyTodayTitle": "Start with one small habit",
+  "emptyTodayBody": "Pick something easy you can do today. You can add more later.",
+  "addFirstHabit": "Add your first habit",
+  "ringSemantics": "{done} of {total} habits completed",
+  "@ringSemantics": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "doneOfTotal": "{done}/{total}",
+  "@doneOfTotal": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "completedLabel": "completed",
+  "yourHabits": "Your habits",
+  "nothingScheduled": "Nothing scheduled for this day. Enjoy the rest.",
+  "editingDay": "Editing {date}",
+  "@editingDay": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "backToToday": "Back to today",
+  "skippedForDay": "Skipped for this day",
+  "readyToStartAgain": "Ready to start again?",
+  "firstStepHint": "Your first check-in starts the streak",
+  "doneLabel": "Done",
+  "progressOf": "{value}/{target} {unit}",
+  "@progressOf": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      },
+      "target": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "checkUndo": "{name} is done. Tap to undo.",
+  "@checkUndo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkAdd": "Add {step} to {name}",
+  "@checkAdd": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkUnskip": "{name} is skipped. Tap to unskip.",
+  "@checkUnskip": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "checkDo": "Mark {name} as done",
+  "@checkDo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "milestone": "{days}-day streak on {name}! Lovely consistency.",
+  "@milestone": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "dayStreak": "{days}-day streak",
+  "@dayStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "addNote": "Add note",
+  "editNote": "Edit note",
+  "skipDay": "Skip this day",
+  "unskipDay": "Unskip this day",
+  "skipHint": "Won't break your streak or lower your rate",
+  "editHabit": "Edit habit",
+  "archiveHabit": "Archive habit",
+  "restoreHabit": "Restore habit",
+  "deleteHabit": "Delete habit",
+  "noteFor": "Note for {name}",
+  "@noteFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noteHint": "How did it go?",
+  "habitArchived": "{name} archived",
+  "@habitArchived": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "habitRestored": "{name} restored",
+  "@habitRestored": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "Undo",
+  "unitMinutes": "min",
+  "decrease": "Decrease",
+  "increase": "Increase",
+  "habitNotFound": "This habit is no longer here.",
+  "moreActions": "More actions",
+  "bestStreak": "Best {days}",
+  "@bestStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "todayLabel": "Today",
+  "goalOf": "Goal: {target} {unit}",
+  "@goalOf": {
+    "placeholders": {
+      "target": {
+        "type": "int"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "completionRate": "Completion rate",
+  "checkIns": "Check-ins",
+  "bestDay": "Best day",
+  "previousMonth": "Previous month",
+  "nextMonth": "Next month",
+  "previousWeek": "Previous week",
+  "nextWeek": "Next week",
+  "statusDone": "Done",
+  "statusPartial": "Partly done",
+  "statusSkipped": "Skipped",
+  "statusMissed": "Not done",
+  "statusNotDone": "Not done",
+  "statusPending": "Not yet",
+  "statusNotScheduled": "Not scheduled",
+  "last8Weeks": "Last 8 weeks",
+  "chartCaptionWeekly": "Bars show the share of scheduled days completed each week.",
+  "chartCaptionDaily": "Bars show the share of scheduled habits completed each day. Tap a bar for details.",
+  "weekBarSemantics": "Week of {date}: {done} of {scheduled} days done",
+  "@weekBarSemantics": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "done": {
+        "type": "int"
+      },
+      "scheduled": {
+        "type": "int"
+      }
+    }
+  },
+  "dayBarSemantics": "{date}: {done} of {scheduled} habits done",
+  "@dayBarSemantics": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "done": {
+        "type": "int"
+      },
+      "scheduled": {
+        "type": "int"
+      }
+    }
+  },
+  "notes": "Notes",
+  "noNotesYet": "No notes yet. Long-press a habit on Today to add one.",
+  "deleteHabitTitle": "Delete {name}?",
+  "@deleteHabitTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteHabitBody": "This removes the habit and all its history. To keep the history, archive it instead.",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "save": "Save",
+  "ok": "OK",
+  "nameRequired": "Give your habit a name",
+  "pickAtLeastOneDay": "Pick at least one day",
+  "habitUpdated": "Changes saved",
+  "habitCreated": "{name} added",
+  "@habitCreated": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "discardTitle": "Discard changes?",
+  "discardBody": "You have changes that aren't saved yet.",
+  "discard": "Discard",
+  "newHabit": "New habit",
+  "habitName": "Habit name",
+  "habitNameHint": "e.g. Drink water",
+  "iconAndColor": "Choose an icon & color",
+  "goalType": "Goal type",
+  "goalYesNo": "Yes / No",
+  "goalCount": "Count",
+  "goalTime": "Time",
+  "goalPerDay": "Goal per day",
+  "unit": "Unit",
+  "unitHint": "e.g. glasses, pages",
+  "repeat": "Repeat",
+  "repeatEveryDay": "Every day",
+  "repeatSpecificDays": "Some days",
+  "repeatPerWeek": "Per week",
+  "timesPerWeekUnit": "times per week",
+  "reminders": "Reminders",
+  "removeReminder": "Remove reminder",
+  "addReminder": "+ Add reminder",
+  "remindersOff": "Reminders are off for this habit.",
+  "moreOptions": "More options",
+  "startDate": "Start date",
+  "endDate": "End date",
+  "noEndDate": "No end date",
+  "clearEndDate": "Clear end date",
+  "note": "Note",
+  "habitNoteHint": "Why this habit matters to you",
+  "saveChanges": "Save changes",
+  "saveHabit": "Save habit",
+  "suggestWater": "Drink water",
+  "suggestRead": "Read",
+  "suggestWalk": "Take a walk",
+  "suggestMeditate": "Meditate",
+  "suggestSleep": "Sleep before 11",
+  "suggestNoSugar": "No sugar",
+  "unitGlasses": "glasses",
+  "unitPages": "pages",
+  "colorNumber": "Color {number}",
+  "@colorNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "iconNumber": "Icon {number}",
+  "@iconNumber": {
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "statsEmptyTitle": "Your progress will show here",
+  "statsEmptyNoHabits": "Add a habit and check in a few times to see your week and month.",
+  "statsEmptyPeriod": "Nothing to show for this period yet. Check-ins will appear here.",
+  "week": "Week",
+  "month": "Month",
+  "jumpToToday": "Today",
+  "vsLastWeek": "vs last week",
+  "vsLastMonth": "vs last month",
+  "summary": "Summary",
+  "habitsCompleted": "Habits completed",
+  "currentStreak": "Current streak",
+  "daysCount": "{count} days",
+  "@daysCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perfectDays": "Perfect days",
+  "longestStreak": "Longest streak",
+  "totalCheckIns": "Total check-ins",
+  "byHabit": "By habit",
+  "insightBetterWeek": "You did {percent}% better than last week.",
+  "@insightBetterWeek": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "insightBetterMonth": "You did {percent}% better than last month.",
+  "@insightBetterMonth": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "insightHardestDay": "{weekday}s are your hardest day.",
+  "@insightHardestDay": {
+    "placeholders": {
+      "weekday": {
+        "type": "String"
+      }
+    }
+  },
+  "insightSteady": "Steady as last time. Consistency is the habit.",
+  "insightKeepGoing": "Every check-in counts. Keep going.",
+  "allHabits": "All habits",
+  "noData": "No data",
+  "less": "Less",
+  "more": "More",
+  "perfectDay": "All done",
+  "doneOfScheduled": "{done} of {scheduled} habits done",
+  "@doneOfScheduled": {
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "scheduled": {
+        "type": "int"
+      }
+    }
+  },
+  "trendSame": "Same",
+  "trendUp": "Up {percent}% {compared}",
+  "@trendUp": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      },
+      "compared": {
+        "type": "String"
+      }
+    }
+  },
+  "trendDown": "Down {percent}% {compared}",
+  "@trendDown": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      },
+      "compared": {
+        "type": "String"
+      }
+    }
+  },
+  "yourWidgets": "Your widgets",
+  "widgetsSubtitle": "Your habits, your home screen.",
+  "livePreview": "Live preview",
+  "preview": "Preview",
+  "myWidgets": "My widgets",
+  "widgetsUsed": "{used} of {limit} used",
+  "@widgetsUsed": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "chooseAWidget": "Choose a widget",
+  "removeWidget": "Remove widget",
+  "removeWidgetTitle": "Remove this widget?",
+  "removeWidgetBody": "Your habits and history stay safe.",
+  "remove": "Remove",
+  "widgetLimitTitle": "Widget limit reached",
+  "widgetLimitBody": "The free version includes {limit} widgets with every option. Remove one to add another, or get Plus for unlimited widgets.",
+  "@widgetLimitBody": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "widgetSingleHabit": "Single habit",
+  "widgetSingleHabitDesc": "One habit with a big check button",
+  "widgetTodayList": "Today list",
+  "widgetTodayListDesc": "Up to 3 or 6 habits with check buttons",
+  "widgetProgressRing": "Progress ring",
+  "widgetProgressRingDesc": "Today's completion at a glance",
+  "widgetWeekStrip": "Week strip",
+  "widgetWeekStripDesc": "Seven days with done dots",
+  "widgetMonthHeatmap": "Month heatmap",
+  "widgetMonthHeatmapDesc": "Calendar for one habit or all",
+  "widgetStreakCounter": "Streak counter",
+  "widgetStreakCounterDesc": "Current streak with a flame",
+  "widgetBuilder": "Widget builder",
+  "widgetType": "Widget type",
+  "widgetSizeLabel": "Size",
+  "sizeMedium": "Medium {grid}",
+  "@sizeMedium": {
+    "placeholders": {
+      "grid": {
+        "type": "String"
+      }
+    }
+  },
+  "sizeLarge": "Large {grid}",
+  "@sizeLarge": {
+    "placeholders": {
+      "grid": {
+        "type": "String"
+      }
+    }
+  },
+  "habitsShown": "Habits shown",
+  "widgetUsesAllHabits": "This widget uses all of today's habits.",
+  "widgetMaxHabits": "This size shows up to {count} habits",
+  "@widgetMaxHabits": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "theme": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeDevice": "Device",
+  "themeAccent": "Accent",
+  "background": "Background",
+  "bgSolid": "Solid",
+  "bgGradient": "Gradient",
+  "bgTransparent": "Transparent",
+  "opacity": "Opacity",
+  "cornerRadius": "Corner radius",
+  "cornerSquare": "Square",
+  "cornerRounded": "Rounded",
+  "cornerRound": "Round",
+  "textSize": "Text size",
+  "sizeS": "Small",
+  "sizeM": "Medium",
+  "sizeL": "Large",
+  "showOnWidget": "Show on widget",
+  "showTitle": "Title",
+  "showStreak": "Streak",
+  "showDate": "Date",
+  "showPercentage": "Percentage",
+  "tapAction": "When tapped",
+  "tapCheck": "Check habit",
+  "tapOpenToday": "Open Today",
+  "tapOpenStats": "Open Stats",
+  "weekStarts": "Week starts on",
+  "contrastWarning": "Text may be hard to read on some wallpapers. Try a higher opacity or another theme.",
+  "addToHomeScreen": "Add to home screen",
+  "widgetSaved": "Widget saved to My widgets",
+  "widgetUpdated": "Widget updated",
+  "widgetPreviewSemantics": "Widget preview",
+  "widgetPickHabit": "Pick a habit",
+  "widgetNothingToday": "Nothing scheduled today",
+  "today": "Today",
+  "thisWeek": "This week",
+  "accountAndBackup": "Account & backup",
+  "yourName": "Your name",
+  "notSignedIn": "Not signed in",
+  "backUpNow": "Back up now",
+  "restore": "Restore",
+  "exportData": "Export file",
+  "exportFormats": "CSV and JSON",
+  "importData": "Import file",
+  "availableWithCloud": "This will work once cloud backup is connected.",
+  "defaultReminderTime": "Default reminder time",
+  "quietHours": "Quiet hours",
+  "dailySummary": "Daily summary",
+  "dailySummaryHint": "\"3 of 5 habits done today\"",
+  "weeklyReport": "Weekly report",
+  "weeklyReportHint": "Last week's rate and one insight",
+  "appearance": "Appearance",
+  "textNormal": "Normal",
+  "textLarge": "Large",
+  "textExtraLarge": "Extra large",
+  "preferences": "Preferences",
+  "language": "Language",
+  "haptics": "Haptics",
+  "animations": "Animations",
+  "celebrations": "Milestone celebrations",
+  "celebrationsHint": "At 7, 30, 100 and 365 days",
+  "habits": "Habits",
+  "archivedHabits": "Archived habits",
+  "noArchivedTitle": "Nothing archived",
+  "noArchivedBody": "Archived habits keep their history and can come back anytime.",
+  "plusTitle": "Habito Plus",
+  "plusBody": "Unlimited widgets. One-time or yearly. Never ads.",
+  "learnMore": "Learn more",
+  "privacy": "Privacy",
+  "whatWeStore": "What we store",
+  "whatWeStoreBody": "Only your account email, habits, check-ins and settings. No ads, no trackers, and nothing is sold or shared.",
+  "privacyPolicy": "Privacy policy",
+  "signOut": "Sign out",
+  "signOutTitle": "Sign out?",
+  "signOutBody": "Your progress stays on this phone and in your backup.",
+  "deleteAccount": "Delete my account and data",
+  "deleteAccountTitle": "Delete account and data?",
+  "deleteAccountBody": "This permanently removes your habits, check-ins, settings and backup from this phone and the cloud.",
+  "versionLabel": "Habito {version}",
+  "@versionLabel": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "noAdsPromise": "No ads. No trackers. Ever.",
+  "signIn": "Sign in with Google",
+  "signInHint": "Back up your progress and restore it on any phone",
+  "signedOutMessage": "Signed out. Your progress stays on this phone.",
+  "signedInMessage": "Signed in. Backup is on."
+}
