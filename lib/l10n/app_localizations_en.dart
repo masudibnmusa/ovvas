@@ -801,10 +801,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exportData => 'Export file';
 
   @override
-  String get exportFormats => 'CSV and JSON';
+  String get exportFormats => 'PDF report';
 
   @override
   String get importData => 'Import file';
+
+  @override
+  String get exportSaved => 'Report saved';
+
+  @override
+  String get exportFailed => 'Couldn\'t create the file. Try again.';
+
+  @override
+  String get importConfirmTitle => 'Import from file?';
+
+  @override
+  String importConfirmMessage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits',
+      one: '1 habit',
+    );
+    return '$_temp0 will be imported with their check-ins. Habits already on this phone are updated from the file. Nothing is deleted.';
+  }
+
+  @override
+  String get importAction => 'Import';
+
+  @override
+  String importDone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits imported',
+      one: '1 habit imported',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importNotOvvas =>
+      'This PDF wasn\'t exported from Ovvas, so there\'s nothing to import.';
+
+  @override
+  String get importFailed => 'Couldn\'t read the file. Try again.';
 
   @override
   String get availableWithCloud =>
@@ -887,11 +928,123 @@ class AppLocalizationsEn extends AppLocalizations {
   String get whatWeStore => 'What we store';
 
   @override
-  String get whatWeStoreBody =>
-      'Only your account email, habits, check-ins and settings. No ads, no trackers, and nothing is sold or shared.';
+  String get privacyPolicy => 'Privacy policy';
 
   @override
-  String get privacyPolicy => 'Privacy policy';
+  String get whatWeStoreIntro =>
+      'Ovvas is built to keep your habits private. Here is everything the app keeps, and where.';
+
+  @override
+  String get storeOnPhoneTitle => 'On your phone';
+
+  @override
+  String get storeOnPhoneBody =>
+      'Your habits, check-ins, notes, home screen widgets and settings, including the name you type in, are saved on this phone. The app works fully without an account or internet.';
+
+  @override
+  String get storeCloudTitle => 'In the cloud, only if you sign in';
+
+  @override
+  String get storeCloudBody =>
+      'When you sign in, your habits, check-ins, notes and widget layouts are backed up to our server so you can restore them on another phone. Your settings and your name stay on this phone.';
+
+  @override
+  String get storeAccountTitle => 'Your account';
+
+  @override
+  String get storeAccountBody =>
+      'Signing in with Google gives us your email address and basic profile (name and photo) to create your account. We never see your Google password.';
+
+  @override
+  String get storeNeverTitle => 'What we never collect';
+
+  @override
+  String get storeNeverBody =>
+      'No ads, analytics, trackers or crash reporting. No location, contacts, photos, camera or microphone. Your data is never sold or shared.';
+
+  @override
+  String get storeExportTitle => 'Files you export';
+
+  @override
+  String get storeExportBody =>
+      'Export file creates a PDF of your habits and history. It goes only where you save it, so anyone you share it with can read it.';
+
+  @override
+  String get readFullPolicy => 'Read the full privacy policy';
+
+  @override
+  String privacyUpdated(String date) {
+    return 'Last updated: $date';
+  }
+
+  @override
+  String get privacyIntro =>
+      'Ovvas is a habit tracker made to work without collecting your data. This policy explains what the app stores, why, and the choices you have.';
+
+  @override
+  String get policyCollectTitle => '1. Information we collect';
+
+  @override
+  String get policyCollectBody =>
+      '• Without an account: nothing leaves your phone. Habits, check-ins, notes, widgets and settings are stored only on your device.\n• With an account: your email address and basic Google profile (name and photo), plus the habits, check-ins, notes and widget layouts you create.\n• We do not collect location, contacts, photos, device identifiers, usage analytics or advertising data.';
+
+  @override
+  String get policyUseTitle => '2. How we use it';
+
+  @override
+  String get policyUseBody =>
+      'Only to run the app: to show your habits and stats, and, if you sign in, to back up your data and keep it in sync across your phones. We do not use your data for ads or profiling, and we do not read your notes.';
+
+  @override
+  String get policyStorageTitle =>
+      '3. Where it is stored and how it is protected';
+
+  @override
+  String get policyStorageBody =>
+      'Data on your phone stays in the app\'s private storage. Backups are stored with Supabase, our hosting provider. Data travels over encrypted connections (HTTPS), and access rules on the server make sure only your account can read or change your data.';
+
+  @override
+  String get policySharingTitle => '4. Sharing';
+
+  @override
+  String get policySharingBody =>
+      'We never sell, rent or trade your data. We only rely on these services to run the app:\n• Supabase: account sign-in and backup storage.\n• Google: sign-in with your Google account.\n• Google Play or the App Store: payments for Ovvas Plus. We never see your card details.\nWe may disclose data only if the law requires it.';
+
+  @override
+  String get policyRetentionTitle => '5. Keeping and deleting your data';
+
+  @override
+  String get policyRetentionBody =>
+      '• Data on your phone stays until you delete it or uninstall the app.\n• Backups are kept while your account exists.\n• Signing out stops backups but keeps the data on your phone.\n• Deleting your account removes the account and all backed-up data from our server.';
+
+  @override
+  String get policyChoicesTitle => '6. Your choices';
+
+  @override
+  String get policyChoicesBody =>
+      'You can use Ovvas without an account, export your data as a PDF at any time, delete any habit and its history, sign out, or delete your account from Settings.';
+
+  @override
+  String get policyChildrenTitle => '7. Children';
+
+  @override
+  String get policyChildrenBody =>
+      'Ovvas is not directed at children under 13, and we do not knowingly collect personal information from them.';
+
+  @override
+  String get policyChangesTitle => '8. Changes to this policy';
+
+  @override
+  String get policyChangesBody =>
+      'If this policy changes, the new version will appear here with a new date. We will not start collecting new kinds of data without telling you first.';
+
+  @override
+  String get policyContactTitle => '9. Contact';
+
+  @override
+  String policyContactBody(String email) {
+    return 'Questions about your privacy? Write to us at $email.';
+  }
 
   @override
   String get signOut => 'Sign out';
@@ -933,6 +1086,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signedInMessage => 'Signed in. Backup is on.';
+
+  @override
+  String get signInFailed =>
+      'Couldn\'t sign in. Check your internet and try again.';
 
   @override
   String get backupFailed =>

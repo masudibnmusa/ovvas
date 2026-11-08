@@ -7,6 +7,8 @@ import '../common/components.dart';
 import '../common/dialogs.dart';
 import '../common/format.dart';
 import '../today/today_screen.dart' show SyncChip;
+import 'file_transfer.dart';
+import 'privacy_sheets.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -70,8 +72,14 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: Text(store.cloud.available ? l.signInHint : l.cloudNotConfigured),
                 enabled: store.cloud.available,
                 onTap: () async {
-                  await store.signIn();
-                  // Browser sign-in finishes later; the screen updates then.
+                  try {
+                    await store.signIn();
+                  } catch (e) {
+                    debugPrint('Sign-in failed: $e');
+                    if (context.mounted) context.showSnack(l.signInFailed);
+                    return;
+                  }
+                  // On phones the browser sign-in finishes later; the screen updates then.
                   if (context.mounted && store.signedIn) context.showSnack(l.signedInMessage);
                 },
               ),
@@ -80,9 +88,13 @@ class SettingsScreen extends StatelessWidget {
               leading: const Icon(Icons.file_download_outlined),
               title: Text(l.exportData),
               subtitle: Text(l.exportFormats),
-              onTap: soon,
+              onTap: () => exportPdf(context),
             ),
-            ListTile(leading: const Icon(Icons.file_upload_outlined), title: Text(l.importData), onTap: soon),
+            ListTile(
+              leading: const Icon(Icons.file_upload_outlined),
+              title: Text(l.importData),
+              onTap: () => importPdf(context),
+            ),
           ]),
 
           // Reminders
@@ -227,7 +239,10 @@ class SettingsScreen extends StatelessWidget {
             color: c.mint,
             child: Row(
               children: [
-                Icon(Icons.spa_rounded, color: c.onMint, size: 32),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.asset('assets/brand/logo_mark.png', width: 44, height: 44, excludeFromSemantics: true),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -239,7 +254,8 @@ class SettingsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                TextButton(onPressed: soon, child: Text(l.learnMore)),
+                // Flexible so large text wraps instead of overflowing on narrow phones.
+                Flexible(child: TextButton(onPressed: soon, child: Text(l.learnMore, textAlign: TextAlign.center))),
               ],
             ),
           ),
@@ -250,16 +266,13 @@ class SettingsScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.shield_outlined),
               title: Text(l.whatWeStore),
-              onTap: () => showDialog<void>(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text(l.whatWeStore),
-                  content: Text(l.whatWeStoreBody),
-                  actions: [TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.ok))],
-                ),
-              ),
+              onTap: () => showWhatWeStore(context),
             ),
-            ListTile(leading: const Icon(Icons.policy_outlined), title: Text(l.privacyPolicy), onTap: soon),
+            ListTile(
+              leading: const Icon(Icons.policy_outlined),
+              title: Text(l.privacyPolicy),
+              onTap: () => showPrivacyPolicy(context),
+            ),
             if (store.signedIn)
               ListTile(
                 leading: const Icon(Icons.logout_rounded),

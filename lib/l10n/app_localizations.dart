@@ -1517,7 +1517,7 @@ abstract class AppLocalizations {
   /// No description provided for @exportFormats.
   ///
   /// In en, this message translates to:
-  /// **'CSV and JSON'**
+  /// **'PDF report'**
   String get exportFormats;
 
   /// No description provided for @importData.
@@ -1525,6 +1525,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Import file'**
   String get importData;
+
+  /// No description provided for @exportSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Report saved'**
+  String get exportSaved;
+
+  /// No description provided for @exportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t create the file. Try again.'**
+  String get exportFailed;
+
+  /// No description provided for @importConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from file?'**
+  String get importConfirmTitle;
+
+  /// No description provided for @importConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 habit} other{{count} habits}} will be imported with their check-ins. Habits already on this phone are updated from the file. Nothing is deleted.'**
+  String importConfirmMessage(int count);
+
+  /// No description provided for @importAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get importAction;
+
+  /// No description provided for @importDone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 habit imported} other{{count} habits imported}}'**
+  String importDone(int count);
+
+  /// No description provided for @importNotOvvas.
+  ///
+  /// In en, this message translates to:
+  /// **'This PDF wasn\'t exported from Ovvas, so there\'s nothing to import.'**
+  String get importNotOvvas;
+
+  /// No description provided for @importFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read the file. Try again.'**
+  String get importFailed;
 
   /// No description provided for @availableWithCloud.
   ///
@@ -1682,17 +1730,203 @@ abstract class AppLocalizations {
   /// **'What we store'**
   String get whatWeStore;
 
-  /// No description provided for @whatWeStoreBody.
-  ///
-  /// In en, this message translates to:
-  /// **'Only your account email, habits, check-ins and settings. No ads, no trackers, and nothing is sold or shared.'**
-  String get whatWeStoreBody;
-
   /// No description provided for @privacyPolicy.
   ///
   /// In en, this message translates to:
   /// **'Privacy policy'**
   String get privacyPolicy;
+
+  /// No description provided for @whatWeStoreIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Ovvas is built to keep your habits private. Here is everything the app keeps, and where.'**
+  String get whatWeStoreIntro;
+
+  /// No description provided for @storeOnPhoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'On your phone'**
+  String get storeOnPhoneTitle;
+
+  /// No description provided for @storeOnPhoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your habits, check-ins, notes, home screen widgets and settings, including the name you type in, are saved on this phone. The app works fully without an account or internet.'**
+  String get storeOnPhoneBody;
+
+  /// No description provided for @storeCloudTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'In the cloud, only if you sign in'**
+  String get storeCloudTitle;
+
+  /// No description provided for @storeCloudBody.
+  ///
+  /// In en, this message translates to:
+  /// **'When you sign in, your habits, check-ins, notes and widget layouts are backed up to our server so you can restore them on another phone. Your settings and your name stay on this phone.'**
+  String get storeCloudBody;
+
+  /// No description provided for @storeAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account'**
+  String get storeAccountTitle;
+
+  /// No description provided for @storeAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Signing in with Google gives us your email address and basic profile (name and photo) to create your account. We never see your Google password.'**
+  String get storeAccountBody;
+
+  /// No description provided for @storeNeverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What we never collect'**
+  String get storeNeverTitle;
+
+  /// No description provided for @storeNeverBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No ads, analytics, trackers or crash reporting. No location, contacts, photos, camera or microphone. Your data is never sold or shared.'**
+  String get storeNeverBody;
+
+  /// No description provided for @storeExportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Files you export'**
+  String get storeExportTitle;
+
+  /// No description provided for @storeExportBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Export file creates a PDF of your habits and history. It goes only where you save it, so anyone you share it with can read it.'**
+  String get storeExportBody;
+
+  /// No description provided for @readFullPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the full privacy policy'**
+  String get readFullPolicy;
+
+  /// No description provided for @privacyUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: {date}'**
+  String privacyUpdated(String date);
+
+  /// No description provided for @privacyIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Ovvas is a habit tracker made to work without collecting your data. This policy explains what the app stores, why, and the choices you have.'**
+  String get privacyIntro;
+
+  /// No description provided for @policyCollectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Information we collect'**
+  String get policyCollectTitle;
+
+  /// No description provided for @policyCollectBody.
+  ///
+  /// In en, this message translates to:
+  /// **'• Without an account: nothing leaves your phone. Habits, check-ins, notes, widgets and settings are stored only on your device.\n• With an account: your email address and basic Google profile (name and photo), plus the habits, check-ins, notes and widget layouts you create.\n• We do not collect location, contacts, photos, device identifiers, usage analytics or advertising data.'**
+  String get policyCollectBody;
+
+  /// No description provided for @policyUseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'2. How we use it'**
+  String get policyUseTitle;
+
+  /// No description provided for @policyUseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Only to run the app: to show your habits and stats, and, if you sign in, to back up your data and keep it in sync across your phones. We do not use your data for ads or profiling, and we do not read your notes.'**
+  String get policyUseBody;
+
+  /// No description provided for @policyStorageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Where it is stored and how it is protected'**
+  String get policyStorageTitle;
+
+  /// No description provided for @policyStorageBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Data on your phone stays in the app\'s private storage. Backups are stored with Supabase, our hosting provider. Data travels over encrypted connections (HTTPS), and access rules on the server make sure only your account can read or change your data.'**
+  String get policyStorageBody;
+
+  /// No description provided for @policySharingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Sharing'**
+  String get policySharingTitle;
+
+  /// No description provided for @policySharingBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We never sell, rent or trade your data. We only rely on these services to run the app:\n• Supabase: account sign-in and backup storage.\n• Google: sign-in with your Google account.\n• Google Play or the App Store: payments for Ovvas Plus. We never see your card details.\nWe may disclose data only if the law requires it.'**
+  String get policySharingBody;
+
+  /// No description provided for @policyRetentionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'5. Keeping and deleting your data'**
+  String get policyRetentionTitle;
+
+  /// No description provided for @policyRetentionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'• Data on your phone stays until you delete it or uninstall the app.\n• Backups are kept while your account exists.\n• Signing out stops backups but keeps the data on your phone.\n• Deleting your account removes the account and all backed-up data from our server.'**
+  String get policyRetentionBody;
+
+  /// No description provided for @policyChoicesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'6. Your choices'**
+  String get policyChoicesTitle;
+
+  /// No description provided for @policyChoicesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use Ovvas without an account, export your data as a PDF at any time, delete any habit and its history, sign out, or delete your account from Settings.'**
+  String get policyChoicesBody;
+
+  /// No description provided for @policyChildrenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'7. Children'**
+  String get policyChildrenTitle;
+
+  /// No description provided for @policyChildrenBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Ovvas is not directed at children under 13, and we do not knowingly collect personal information from them.'**
+  String get policyChildrenBody;
+
+  /// No description provided for @policyChangesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'8. Changes to this policy'**
+  String get policyChangesTitle;
+
+  /// No description provided for @policyChangesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'If this policy changes, the new version will appear here with a new date. We will not start collecting new kinds of data without telling you first.'**
+  String get policyChangesBody;
+
+  /// No description provided for @policyContactTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'9. Contact'**
+  String get policyContactTitle;
+
+  /// No description provided for @policyContactBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions about your privacy? Write to us at {email}.'**
+  String policyContactBody(String email);
 
   /// No description provided for @signOut.
   ///
@@ -1765,6 +1999,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Signed in. Backup is on.'**
   String get signedInMessage;
+
+  /// No description provided for @signInFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t sign in. Check your internet and try again.'**
+  String get signInFailed;
 
   /// No description provided for @backupFailed.
   ///

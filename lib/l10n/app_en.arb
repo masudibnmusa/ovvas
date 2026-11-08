@@ -540,8 +540,30 @@
   "backUpNow": "Back up now",
   "restore": "Restore",
   "exportData": "Export file",
-  "exportFormats": "CSV and JSON",
+  "exportFormats": "PDF report",
   "importData": "Import file",
+  "exportSaved": "Report saved",
+  "exportFailed": "Couldn't create the file. Try again.",
+  "importConfirmTitle": "Import from file?",
+  "importConfirmMessage": "{count, plural, =1{1 habit} other{{count} habits}} will be imported with their check-ins. Habits already on this phone are updated from the file. Nothing is deleted.",
+  "@importConfirmMessage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importAction": "Import",
+  "importDone": "{count, plural, =1{1 habit imported} other{{count} habits imported}}",
+  "@importDone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importNotOvvas": "This PDF wasn't exported from Ovvas, so there's nothing to import.",
+  "importFailed": "Couldn't read the file. Try again.",
   "availableWithCloud": "This will work once cloud backup is connected.",
   "defaultReminderTime": "Default reminder time",
   "quietHours": "Quiet hours",
@@ -568,8 +590,53 @@
   "learnMore": "Learn more",
   "privacy": "Privacy",
   "whatWeStore": "What we store",
-  "whatWeStoreBody": "Only your account email, habits, check-ins and settings. No ads, no trackers, and nothing is sold or shared.",
   "privacyPolicy": "Privacy policy",
+  "whatWeStoreIntro": "Ovvas is built to keep your habits private. Here is everything the app keeps, and where.",
+  "storeOnPhoneTitle": "On your phone",
+  "storeOnPhoneBody": "Your habits, check-ins, notes, home screen widgets and settings, including the name you type in, are saved on this phone. The app works fully without an account or internet.",
+  "storeCloudTitle": "In the cloud, only if you sign in",
+  "storeCloudBody": "When you sign in, your habits, check-ins, notes and widget layouts are backed up to our server so you can restore them on another phone. Your settings and your name stay on this phone.",
+  "storeAccountTitle": "Your account",
+  "storeAccountBody": "Signing in with Google gives us your email address and basic profile (name and photo) to create your account. We never see your Google password.",
+  "storeNeverTitle": "What we never collect",
+  "storeNeverBody": "No ads, analytics, trackers or crash reporting. No location, contacts, photos, camera or microphone. Your data is never sold or shared.",
+  "storeExportTitle": "Files you export",
+  "storeExportBody": "Export file creates a PDF of your habits and history. It goes only where you save it, so anyone you share it with can read it.",
+  "readFullPolicy": "Read the full privacy policy",
+  "privacyUpdated": "Last updated: {date}",
+  "@privacyUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "privacyIntro": "Ovvas is a habit tracker made to work without collecting your data. This policy explains what the app stores, why, and the choices you have.",
+  "policyCollectTitle": "1. Information we collect",
+  "policyCollectBody": "• Without an account: nothing leaves your phone. Habits, check-ins, notes, widgets and settings are stored only on your device.\n• With an account: your email address and basic Google profile (name and photo), plus the habits, check-ins, notes and widget layouts you create.\n• We do not collect location, contacts, photos, device identifiers, usage analytics or advertising data.",
+  "policyUseTitle": "2. How we use it",
+  "policyUseBody": "Only to run the app: to show your habits and stats, and, if you sign in, to back up your data and keep it in sync across your phones. We do not use your data for ads or profiling, and we do not read your notes.",
+  "policyStorageTitle": "3. Where it is stored and how it is protected",
+  "policyStorageBody": "Data on your phone stays in the app's private storage. Backups are stored with Supabase, our hosting provider. Data travels over encrypted connections (HTTPS), and access rules on the server make sure only your account can read or change your data.",
+  "policySharingTitle": "4. Sharing",
+  "policySharingBody": "We never sell, rent or trade your data. We only rely on these services to run the app:\n• Supabase: account sign-in and backup storage.\n• Google: sign-in with your Google account.\n• Google Play or the App Store: payments for Ovvas Plus. We never see your card details.\nWe may disclose data only if the law requires it.",
+  "policyRetentionTitle": "5. Keeping and deleting your data",
+  "policyRetentionBody": "• Data on your phone stays until you delete it or uninstall the app.\n• Backups are kept while your account exists.\n• Signing out stops backups but keeps the data on your phone.\n• Deleting your account removes the account and all backed-up data from our server.",
+  "policyChoicesTitle": "6. Your choices",
+  "policyChoicesBody": "You can use Ovvas without an account, export your data as a PDF at any time, delete any habit and its history, sign out, or delete your account from Settings.",
+  "policyChildrenTitle": "7. Children",
+  "policyChildrenBody": "Ovvas is not directed at children under 13, and we do not knowingly collect personal information from them.",
+  "policyChangesTitle": "8. Changes to this policy",
+  "policyChangesBody": "If this policy changes, the new version will appear here with a new date. We will not start collecting new kinds of data without telling you first.",
+  "policyContactTitle": "9. Contact",
+  "policyContactBody": "Questions about your privacy? Write to us at {email}.",
+  "@policyContactBody": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "signOut": "Sign out",
   "signOutTitle": "Sign out?",
   "signOutBody": "Your progress stays on this phone and in your backup.",
@@ -589,6 +656,7 @@
   "signInHint": "Back up your progress and restore it on any phone",
   "signedOutMessage": "Signed out. Your progress stays on this phone.",
   "signedInMessage": "Signed in. Backup is on.",
+  "signInFailed": "Couldn't sign in. Check your internet and try again.",
   "backupFailed": "Couldn't back up. Check your internet and try again.",
   "cloudNotConfigured": "Cloud backup isn't set up in this version yet"
 }

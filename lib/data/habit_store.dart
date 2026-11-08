@@ -7,6 +7,7 @@ import '../domain/dates.dart';
 import '../domain/habit.dart';
 import '../domain/stats.dart';
 import '../domain/widget_config.dart';
+import 'backup/backup_data.dart';
 import 'local/database.dart';
 import 'local/records.dart';
 import 'sync/cloud_sync.dart';
@@ -214,6 +215,43 @@ class HabitStore extends ChangeNotifier {
   Future<bool> backUpNow() async {
     await flush();
     return cloud.syncNow();
+  }
+
+  // ---- Export and import ----
+
+  /// A copy of all habits (archived ones too) and their check-ins.
+  BackupData exportBackup({String userName = ''}) => BackupData(
+        habits: List.of(_habits),
+        entries: {for (final MapEntry(:key, :value) in _entries.entries) key: Map.of(value)},
+        createdAt: now(),
+        userName: userName,
+      );
+
+  /// Merges [data] into the app. Habits with the same id are replaced, new
+  /// ones are added, and check-ins from the file win over ones on this
+  /// phone. Nothing else is removed. Returns how many habits were imported.
+  int importBackup(BackupData data) {
+    for (final h in data.habits) {
+      final i = _habits.indexWhere((x) => x.id == h.id);
+      if (i < 0) {
+        _habits.add(h);
+      } else {
+        _habits[i] = h;
+      }
+      _saveHabit(h);
+    }
+    for (final MapEntry(key: id, value: days) in data.entries.entries) {
+      final m = _entries.putIfAbsent(id, () => {});
+      for (final MapEntry(key: day, value: e) in days.entries) {
+        if (e.isEmpty) continue;
+        final d = dateOnly(day);
+        m[d] = e;
+        final stamp = _stamp();
+        _persist((db) => db.into(db.entries).insertOnConflictUpdate(entryToRow(id, d, e, stamp)));
+      }
+    }
+    _changed();
+    return data.habits.length;
   }
 
   // ---- Persistence ----

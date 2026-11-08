@@ -23,7 +23,7 @@ class SettingsController extends ChangeNotifier {
   bool _celebrations = true;
   bool _dailySummary = false;
   bool _weeklyReport = true;
-  String _userName = 'Nabila';
+  String _userName = 'User';
   ReminderTime _defaultReminder = const ReminderTime(9, 0);
   ReminderTime _quietStart = const ReminderTime(22, 0);
   ReminderTime _quietEnd = const ReminderTime(7, 0);

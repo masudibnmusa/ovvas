@@ -1,12 +1,28 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../local/database.dart';
 import '../local/records.dart';
 import 'cloud_sync.dart';
+
+/// Where the browser returns after Google sign-in on desktop (Linux, Windows,
+/// macOS), which cannot open `ovvas://` links. Add this exact URL to the
+/// Supabase redirect list too.
+const desktopRedirectPort = 43823;
+const desktopRedirectPath = '/login-callback';
+const desktopRedirectUrl = 'http://127.0.0.1:$desktopRedirectPort$desktopRedirectPath';
+
+bool get _isDesktop =>
+    !kIsWeb &&
+    switch (defaultTargetPlatform) {
+      TargetPlatform.linux || TargetPlatform.windows || TargetPlatform.macOS => true,
+      _ => false,
+    };
 
 /// Two-way sync between the local database and Supabase.
 ///
@@ -39,6 +55,7 @@ class SupabaseCloudSync extends CloudSync {
   DateTime? _lastBackup;
   Future<bool>? _current;
   bool _again = false;
+  HttpServer? _loopback;
 
   @override
   bool get signedIn => _auth.currentUser != null;
@@ -70,13 +87,60 @@ class SupabaseCloudSync extends CloudSync {
     _authSub?.cancel();
     _lifecycle?.dispose();
     _debounce?.cancel();
+    _loopback?.close(force: true);
     super.dispose();
   }
 
   @override
   Future<void> signIn() async {
+    if (_isDesktop) return _signInOnDesktop();
     await _auth.signInWithOAuth(OAuthProvider.google, redirectTo: redirectUrl);
   }
+
+  /// Desktop has no `ovvas://` deep link, so the browser returns to a short
+  /// lived local web server instead. Finishes once the user is signed in.
+  Future<void> _signInOnDesktop() async {
+    await _loopback?.close(force: true);
+    final server = _loopback = await HttpServer.bind(InternetAddress.loopbackIPv4, desktopRedirectPort);
+    try {
+      final opened = await _auth.signInWithOAuth(OAuthProvider.google, redirectTo: desktopRedirectUrl);
+      if (!opened) throw const AuthException('Could not open the browser.');
+      await for (final request in server.timeout(const Duration(minutes: 5))) {
+        final query = request.uri.queryParameters;
+        if (request.uri.path != desktopRedirectPath) {
+          request.response.statusCode = HttpStatus.notFound;
+          await request.response.close();
+          continue;
+        }
+        final code = query['code'];
+        Object? failure;
+        if (code == null) {
+          failure = AuthException(query['error_description'] ?? 'Sign-in was cancelled.');
+        } else {
+          try {
+            await _auth.exchangeCodeForSession(code);
+          } catch (e) {
+            failure = e;
+          }
+        }
+        request.response.headers.contentType = ContentType.html;
+        request.response.write(_desktopReplyPage(ok: failure == null));
+        await request.response.close();
+        if (failure != null) throw failure;
+        return;
+      }
+    } on TimeoutException {
+      throw const AuthException('Sign-in timed out.');
+    } finally {
+      await server.close(force: true);
+      if (identical(_loopback, server)) _loopback = null;
+    }
+  }
+
+  static String _desktopReplyPage({required bool ok}) => '<!doctype html><meta charset="utf-8">'
+      '<title>Ovvas</title><body style="font-family:sans-serif;text-align:center;padding-top:80px">'
+      '<h2>${ok ? 'You are signed in to Ovvas' : 'Sign-in did not finish'}</h2>'
+      '<p>${ok ? 'You can close this tab and go back to the app.' : 'Close this tab and try again from the app.'}</p>';
 
   @override
   Future<void> signOut() async {

@@ -76,6 +76,28 @@ Future<void> _visitEverything(WidgetTester tester) async {
   // Settings
   await tester.tap(_tab(Icons.settings_outlined));
   await tester.pumpAndSettle();
+
+  // What we store -> full privacy policy -> close
+  Finder inSheet(Finder f) => find.descendant(of: find.byType(BottomSheet), matching: f);
+  await tester.scrollUntilVisible(find.byIcon(Icons.shield_outlined), 300, scrollable: find.byType(Scrollable).first);
+  // Bring it clear of the navigation bar before tapping.
+  await tester.ensureVisible(find.byIcon(Icons.shield_outlined));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byIcon(Icons.shield_outlined));
+  await tester.pumpAndSettle();
+  expect(inSheet(find.byIcon(Icons.cloud_outlined)), findsOneWidget);
+  final sheetList = inSheet(find.byType(Scrollable));
+  await tester.scrollUntilVisible(inSheet(find.byIcon(Icons.policy_outlined)), 300, scrollable: sheetList);
+  await tester.pumpAndSettle();
+  await tester.tap(inSheet(find.byIcon(Icons.policy_outlined)));
+  await tester.pumpAndSettle();
+  expect(find.byType(BottomSheet), findsOneWidget);
+  expect(inSheet(find.byIcon(Icons.cloud_outlined)), findsNothing);
+  await tester.fling(inSheet(find.byType(ListView)), const Offset(0, -3000), 3000);
+  await tester.pumpAndSettle();
+  Navigator.of(tester.element(find.byType(BottomSheet))).pop();
+  await tester.pumpAndSettle();
+  expect(find.byType(BottomSheet), findsNothing);
 }
 
 void main() {
@@ -122,7 +144,7 @@ void main() {
 
   testWidgets('one tap checks a habit and a second tap undoes it', (tester) async {
     await _pumpApp(tester);
-    expect(find.text('Good morning, Nabila'), findsOneWidget);
+    expect(find.text('Good morning, User'), findsOneWidget);
 
     await tester.tap(find.bySemanticsLabel('Mark Stretch as done'));
     await tester.pumpAndSettle();
@@ -161,7 +183,7 @@ void main() {
 
   testWidgets('every screen renders: dark, Bangla', (tester) async {
     await _pumpApp(tester, mode: ThemeMode.dark, lang: 'bn');
-    expect(find.text('শুভ সকাল, Nabila'), findsOneWidget);
+    expect(find.text('শুভ সকাল, User'), findsOneWidget);
     await _visitEverything(tester);
   });
 

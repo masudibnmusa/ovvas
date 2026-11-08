@@ -1,6 +1,10 @@
-# Ovvas
+<p align="center">
+  <img src="assets/brand/logo_full.png" alt="Ovvas logo" width="160">
+</p>
 
-A calm, ad-free habit tracker built with Flutter.
+<h1 align="center">Ovvas</h1>
+
+<p align="center">Small habits. Big changes.<br>A calm, ad-free habit tracker built with Flutter.</p>
 
 > **Status:** all screens are built. Data is saved on the phone (SQLite via Drift). Google sign-in and cloud sync use Supabase when it is configured; without it, the app keeps data on the phone only. Debug builds start with sample habits on a fresh install.
 
@@ -50,7 +54,9 @@ Optional. Without it, everything works and stays on the phone.
 1. Create a project at [supabase.com](https://supabase.com).
 2. Run [supabase/migrations/20261108000000_ovvas_sync.sql](supabase/migrations/20261108000000_ovvas_sync.sql) in the SQL editor (or `supabase db push` with the Supabase CLI). It creates the tables and the rules that keep each user's data private.
 3. Turn on Google sign-in: **Authentication → Sign In / Providers → Google**, using a Google Cloud OAuth client ID and secret.
-4. Add `ovvas://login-callback` under **Authentication → URL Configuration → Redirect URLs**.
+4. Under **Authentication → URL Configuration → Redirect URLs**, add both:
+   - `ovvas://login-callback` (Android and iOS)
+   - `http://127.0.0.1:43823/login-callback` (Linux, Windows and macOS, where the browser returns to the app through a short-lived local address)
 5. Copy `supabase.env.example.json` to `supabase.env.json` (ignored by git) and fill in your project URL and publishable key (**Project Settings → API Keys**). Then run:
 
 ```bash
@@ -60,6 +66,16 @@ flutter run --dart-define-from-file=supabase.env.json
 In VS Code, pick the **Ovvas (cloud backup)** launch configuration.
 
 How sync works: every change is saved on the phone first and marked for upload. About two seconds after a change, when the app returns to the foreground, and on **Back up now**, the app uploads marked rows and downloads rows changed elsewhere. If two phones edit the same thing, the later edit wins. Deleted items are kept as "deleted" markers so the deletion reaches every phone.
+
+### App icon
+
+The app icon source lives in [assets/icon/](assets/icon/) (calendar-and-leaf mark). The full logo with the name is [assets/brand/logo_full.png](assets/brand/logo_full.png). After replacing the icon, regenerate the icons for every platform:
+
+```bash
+dart run flutter_launcher_icons
+```
+
+Settings are under `flutter_launcher_icons:` in [pubspec.yaml](pubspec.yaml). After running it, undo the change it makes to `ios/Runner.xcodeproj/project.pbxproj` (`git checkout` that file); the tool writes an invalid build setting there.
 
 ### Test
 
@@ -154,6 +170,9 @@ ovvas/
 ├── test/
 │   ├── widget_test.dart              # Every screen, both themes and languages
 │   └── database_test.dart            # Data survives a restart
+├── assets/
+│   ├── icon/                         # Logo mark; source for launcher icons
+│   └── brand/                        # Full logo (README) and in-app logo mark
 ├── supabase/migrations/              # Server tables and security rules
 ├── .github/workflows/ci.yml          # CI/CD pipeline
 ├── android/ ios/ web/ linux/ macos/ windows/   # Platform projects
