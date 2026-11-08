@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
 
-/// Builds Material theme data from Habito tokens.
+/// Builds Material theme data from Ovvas tokens.
 /// Type scale: 12, 14, 16, 20, 24, 32. Cards use a 20 radius.
 ThemeData buildTheme(AppColors c) {
   final isDark = c.brightness == Brightness.dark;

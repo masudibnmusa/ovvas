@@ -32,7 +32,7 @@ Future<void> _pumpApp(
     ..themeMode = mode
     ..locale = Locale(lang)
     ..textScale = textScale;
-  await tester.pumpWidget(HabitoApp(store: store ?? _sampleStore(), settings: settings));
+  await tester.pumpWidget(OvvasApp(store: store ?? _sampleStore(), settings: settings));
   await tester.pumpAndSettle();
 }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Habito color tokens. Screens read colors only from here (via
+/// Ovvas color tokens. Screens read colors only from here (via
 /// `context.colors`), never hardcoded, so light and dark stay in sync.
 @immutable
 class AppColors extends ThemeExtension<AppColors> {

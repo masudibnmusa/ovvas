@@ -58,19 +58,21 @@ class SettingsScreen extends StatelessWidget {
               ListTile(
                 leading: const Icon(Icons.cloud_upload_outlined),
                 title: Text(l.backUpNow),
-                onTap: () {
-                  store.backUpNow();
-                  context.showSnack(l.backedUpJustNow);
+                onTap: () async {
+                  final ok = await store.backUpNow();
+                  if (context.mounted) context.showSnack(ok ? l.backedUpJustNow : l.backupFailed);
                 },
               )
             else
               ListTile(
                 leading: const Icon(Icons.login_rounded),
                 title: Text(l.signIn),
-                subtitle: Text(l.signInHint),
-                onTap: () {
-                  store.signIn();
-                  context.showSnack(l.signedInMessage);
+                subtitle: Text(store.cloud.available ? l.signInHint : l.cloudNotConfigured),
+                enabled: store.cloud.available,
+                onTap: () async {
+                  await store.signIn();
+                  // Browser sign-in finishes later; the screen updates then.
+                  if (context.mounted && store.signedIn) context.showSnack(l.signedInMessage);
                 },
               ),
             ListTile(leading: const Icon(Icons.restore_rounded), title: Text(l.restore), onTap: soon),
@@ -265,8 +267,8 @@ class SettingsScreen extends StatelessWidget {
                 onTap: () async {
                   final ok = await confirmAction(context, title: l.signOutTitle, message: l.signOutBody, confirmLabel: l.signOut);
                   if (!ok || !context.mounted) return;
-                  store.signOut();
-                  context.showSnack(l.signedOutMessage);
+                  await store.signOut();
+                  if (context.mounted) context.showSnack(l.signedOutMessage);
                 },
               ),
             ListTile(

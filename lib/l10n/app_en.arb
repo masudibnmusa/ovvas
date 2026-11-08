@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appName": "Habito",
+  "appName": "Ovvas",
   "tabToday": "Today",
   "tabStats": "Stats",
   "tabWidgets": "Widgets",
@@ -563,7 +563,7 @@
   "archivedHabits": "Archived habits",
   "noArchivedTitle": "Nothing archived",
   "noArchivedBody": "Archived habits keep their history and can come back anytime.",
-  "plusTitle": "Habito Plus",
+  "plusTitle": "Ovvas Plus",
   "plusBody": "Unlimited widgets. One-time or yearly. Never ads.",
   "learnMore": "Learn more",
   "privacy": "Privacy",
@@ -576,7 +576,7 @@
   "deleteAccount": "Delete my account and data",
   "deleteAccountTitle": "Delete account and data?",
   "deleteAccountBody": "This permanently removes your habits, check-ins, settings and backup from this phone and the cloud.",
-  "versionLabel": "Habito {version}",
+  "versionLabel": "Ovvas {version}",
   "@versionLabel": {
     "placeholders": {
       "version": {
@@ -588,5 +588,7 @@
   "signIn": "Sign in with Google",
   "signInHint": "Back up your progress and restore it on any phone",
   "signedOutMessage": "Signed out. Your progress stays on this phone.",
-  "signedInMessage": "Signed in. Backup is on."
+  "signedInMessage": "Signed in. Backup is on.",
+  "backupFailed": "Couldn't back up. Check your internet and try again.",
+  "cloudNotConfigured": "Cloud backup isn't set up in this version yet"
 }

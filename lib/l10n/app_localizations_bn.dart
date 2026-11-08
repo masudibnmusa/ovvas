@@ -931,4 +931,10 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get signedInMessage => 'সাইন ইন হয়েছে। ব্যাকআপ চালু।';
+
+  @override
+  String get backupFailed => 'ব্যাকআপ হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।';
+
+  @override
+  String get cloudNotConfigured => 'এই ভার্সনে ক্লাউড ব্যাকআপ এখনো চালু হয়নি';
 }

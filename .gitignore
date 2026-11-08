@@ -46,3 +46,6 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Supabase keys for local runs (copy supabase.env.example.json)
+supabase.env.json

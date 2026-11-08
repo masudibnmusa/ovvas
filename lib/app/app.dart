@@ -8,17 +8,17 @@ import '../l10n/app_localizations.dart';
 import '../ui/home_shell.dart';
 import 'app_scope.dart';
 
-class HabitoApp extends StatefulWidget {
-  const HabitoApp({super.key, required this.store, required this.settings});
+class OvvasApp extends StatefulWidget {
+  const OvvasApp({super.key, required this.store, required this.settings});
 
   final HabitStore store;
   final SettingsController settings;
 
   @override
-  State<HabitoApp> createState() => _HabitoAppState();
+  State<OvvasApp> createState() => _OvvasAppState();
 }
 
-class _HabitoAppState extends State<HabitoApp> {
+class _OvvasAppState extends State<OvvasApp> {
   late final Listenable _changes = Listenable.merge([widget.store, widget.settings]);
   final _lightTheme = buildTheme(AppColors.light);
   final _darkTheme = buildTheme(AppColors.dark);

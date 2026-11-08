@@ -1,5 +1,5 @@
 name: ovvas
-description: "Habito: a calm, ad-free habit tracker."
+description: "Ovvas: a calm, ad-free habit tracker."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -13,11 +13,16 @@ dependencies:
     sdk: flutter
   intl: any
   cupertino_icons: ^1.0.8
+  drift: ^2.35.3
+  drift_flutter: ^0.3.1
+  supabase_flutter: ^2.18.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  drift_dev: ^2.35.2
+  build_runner: ^2.17.1
 
 flutter:
   uses-material-design: true

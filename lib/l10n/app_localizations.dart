@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Habito'**
+  /// **'Ovvas'**
   String get appName;
 
   /// No description provided for @tabToday.
@@ -1655,7 +1655,7 @@ abstract class AppLocalizations {
   /// No description provided for @plusTitle.
   ///
   /// In en, this message translates to:
-  /// **'Habito Plus'**
+  /// **'Ovvas Plus'**
   String get plusTitle;
 
   /// No description provided for @plusBody.
@@ -1733,7 +1733,7 @@ abstract class AppLocalizations {
   /// No description provided for @versionLabel.
   ///
   /// In en, this message translates to:
-  /// **'Habito {version}'**
+  /// **'Ovvas {version}'**
   String versionLabel(String version);
 
   /// No description provided for @noAdsPromise.
@@ -1765,6 +1765,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Signed in. Backup is on.'**
   String get signedInMessage;
+
+  /// No description provided for @backupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t back up. Check your internet and try again.'**
+  String get backupFailed;
+
+  /// No description provided for @cloudNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup isn\'t set up in this version yet'**
+  String get cloudNotConfigured;
 }
 
 class _AppLocalizationsDelegate

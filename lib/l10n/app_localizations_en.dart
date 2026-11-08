@@ -10,7 +10,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appName => 'Habito';
+  String get appName => 'Ovvas';
 
   @override
   String get tabToday => 'Today';
@@ -872,7 +872,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Archived habits keep their history and can come back anytime.';
 
   @override
-  String get plusTitle => 'Habito Plus';
+  String get plusTitle => 'Ovvas Plus';
 
   @override
   String get plusBody => 'Unlimited widgets. One-time or yearly. Never ads.';
@@ -915,7 +915,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String versionLabel(String version) {
-    return 'Habito $version';
+    return 'Ovvas $version';
   }
 
   @override
@@ -933,4 +933,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signedInMessage => 'Signed in. Backup is on.';
+
+  @override
+  String get backupFailed =>
+      'Couldn\'t back up. Check your internet and try again.';
+
+  @override
+  String get cloudNotConfigured =>
+      'Cloud backup isn\'t set up in this version yet';
 }
