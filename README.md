@@ -87,13 +87,14 @@ The widget tests in [test/widget_test.dart](test/widget_test.dart) run the app w
 
 ## How it works
 
-[![How Ovvas works: screens call HabitStore, which saves every change to the local Drift database first, then CloudSync backs it up to Supabase or keeps it on the phone](docs/diagrams/architecture.svg)](docs/diagrams/architecture.html)
+[![How Ovvas works: screens call HabitStore, which saves every change to the local Drift database first, then the sync backend chosen at startup backs it up to Supabase; settings stay on the phone](docs/diagrams/architecture.svg)](docs/diagrams/architecture.html)
 
 1. A screen calls a method on `HabitStore` (for example, a check-in).
 2. The store updates its in-memory state, so the screen redraws at once.
 3. The change is written to the local Drift database and marked for upload.
-4. `CloudSync` uploads marked rows about two seconds later, when the app returns to the foreground, or on **Back up now**. It also downloads rows changed on other phones.
-5. Without Supabase keys, `LocalOnlyCloudSync` is used and nothing leaves the phone.
+4. When signed in, `SupabaseCloudSync` uploads marked rows about two seconds later, when the app returns to the foreground, or on **Back up now**. It also downloads rows changed on other phones, keeps whichever copy was edited last, and tells the store to reload.
+5. The sync backend is chosen once at startup ([cloud_setup.dart](lib/data/sync/cloud_setup.dart)): without Supabase keys, `LocalOnlyCloudSync` is used and nothing leaves the phone.
+6. Settings are saved only in the local database and are not backed up.
 
 ### Layers
 
@@ -162,7 +163,7 @@ ovvas/
 
 GitHub Actions runs [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
-[![Ovvas CI/CD: pull requests, pushes to main and v* tags run analyze and test; main and tags build the APK; tags publish a GitHub Release](docs/diagrams/ci-cd.svg)](docs/diagrams/ci-cd.html)
+[![Ovvas CI/CD: pull requests, pushes to main, v* tags and manual runs run analyze and test; everything except pull requests builds the APK; tags publish a GitHub Release](docs/diagrams/ci-cd.svg)](docs/diagrams/ci-cd.html)
 
 | Trigger | What runs |
 | --- | --- |
