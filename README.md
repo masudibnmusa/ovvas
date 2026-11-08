@@ -69,53 +69,162 @@ flutter test
 
 The widget tests in [test/widget_test.dart](test/widget_test.dart) run the app with a fixed clock and sample data, in both themes and languages, at different screen widths and text sizes. They use an in-memory store and a fake cloud. [test/database_test.dart](test/database_test.dart) checks that data and settings survive a restart, using an in-memory SQLite database.
 
+## How it works
+
+```mermaid
+flowchart TD
+    User([User]) -->|tap, edit, check in| UI
+
+    subgraph App["Flutter app"]
+        UI["UI screens<br/>Today · Stats · Widgets · Settings"]
+        Scope["AppScope<br/>passes state down the tree"]
+        Store["HabitStore / SettingsController<br/>ChangeNotifier, in-memory state"]
+        Domain["Domain<br/>models, streaks, stats (pure Dart)"]
+        DB[("Drift / SQLite<br/>on the phone")]
+        Sync{"CloudSync"}
+    end
+
+    UI <--> Scope <--> Store
+    Store -->|uses| Domain
+    Store -->|1. save change, mark for upload| DB
+    Store -->|2. ask for backup| Sync
+    Sync -->|no keys set| Local["LocalOnlyCloudSync<br/>data stays on phone"]
+    Sync -->|keys set + signed in| Supa["SupabaseCloudSync"]
+    Supa -->|upload marked rows| Cloud[("Supabase<br/>Postgres + row-level security")]
+    Cloud -->|download rows changed elsewhere| Supa
+    Supa -->|merge, later edit wins| DB
+    Store -->|notifyListeners| UI
+```
+
+1. A screen calls a method on `HabitStore` (for example, a check-in).
+2. The store updates its in-memory state, so the screen redraws at once.
+3. The change is written to the local Drift database and marked for upload.
+4. `CloudSync` uploads marked rows about two seconds later, when the app returns to the foreground, or on **Back up now**. It also downloads rows changed on other phones.
+5. Without Supabase keys, `LocalOnlyCloudSync` is used and nothing leaves the phone.
+
+### Layers
+
+- **Domain** holds plain models and pure functions with no Flutter UI code, so the streak and stats logic is easy to test.
+- **Data** exposes `HabitStore` and `SettingsController`, both `ChangeNotifier`s. Screens only talk to these classes.
+- **AppScope** passes the store and settings down the widget tree.
+- No third-party state management or chart packages are used; charts are drawn with Flutter's own widgets.
+
 ## Project structure
 
 ```
-lib/
-├── main.dart              # Entry point: opens the database and cloud sync
-├── app/                   # App root (MaterialApp, theme, locale) and AppScope
-├── core/theme/            # Colors, habit palette, and ThemeData
-├── domain/                # Pure Dart models and logic
-│   ├── habit.dart         #   Habit, DayEntry, goal and repeat types
-│   ├── stats.dart         #   Streaks, completion rates, period summaries
-│   ├── widget_config.dart #   Home screen widget options
-│   └── dates.dart         #   Date helpers
-├── data/                  # State
-│   ├── habit_store.dart   #   Habits, check-ins, widgets (memory + database)
-│   ├── settings_controller.dart
-│   ├── sample_data.dart   #   Demo habits and history
-│   ├── local/             #   Drift database and model <-> row converters
-│   └── sync/              #   Cloud sync: Supabase, local-only, and a fake for tests
-supabase/migrations/       # Server tables and security rules
-├── l10n/                  # app_en.arb, app_bn.arb, and generated code
-└── ui/
-    ├── home_shell.dart    # Bottom navigation: Today, Stats, Widgets, Settings
-    ├── today/             # Today screen and habit cards
-    ├── habit/             # Habit details and add/edit form
-    ├── stats/             # Stats screen
-    ├── widgets/           # Widget gallery, builder, and previews
-    ├── settings/          # Settings screen
-    └── common/            # Shared components, charts, dialogs, formatting
+ovvas/
+├── lib/
+│   ├── main.dart                     # Entry point: opens the database and cloud sync
+│   ├── app/
+│   │   ├── app.dart                  # MaterialApp, theme, locale
+│   │   └── app_scope.dart            # Passes store and settings down the tree
+│   ├── core/theme/
+│   │   ├── app_colors.dart           # Color tokens
+│   │   ├── app_theme.dart            # Light and dark ThemeData
+│   │   └── habit_palette.dart        # Habit colors
+│   ├── domain/                       # Pure Dart models and logic
+│   │   ├── habit.dart                # Habit, DayEntry, goal and repeat types
+│   │   ├── stats.dart                # Streaks, completion rates, summaries
+│   │   ├── widget_config.dart        # Home screen widget options
+│   │   └── dates.dart                # Date helpers
+│   ├── data/                         # State and storage
+│   │   ├── habit_store.dart          # Habits, check-ins, widgets
+│   │   ├── settings_controller.dart  # User settings
+│   │   ├── sample_data.dart          # Demo habits for debug builds
+│   │   ├── local/
+│   │   │   ├── database.dart         # Drift tables
+│   │   │   ├── database.g.dart       # Generated by build_runner
+│   │   │   └── records.dart          # Model <-> row converters
+│   │   └── sync/
+│   │       ├── cloud_sync.dart       # CloudSync interface, local-only and fake versions
+│   │       ├── cloud_setup.dart      # Picks Supabase or local-only from dart-defines
+│   │       └── supabase_sync.dart    # Upload/download with Supabase
+│   ├── l10n/
+│   │   ├── app_en.arb, app_bn.arb    # English and Bangla strings
+│   │   └── app_localizations*.dart   # Generated by flutter gen-l10n
+│   └── ui/
+│       ├── home_shell.dart           # Bottom navigation
+│       ├── routes.dart               # Navigation helpers
+│       ├── today/                    # Today screen and habit cards
+│       ├── habit/                    # Habit details and add/edit form
+│       ├── stats/                    # Stats screen
+│       ├── widgets/                  # Widget gallery, builder, previews
+│       ├── settings/                 # Settings screen
+│       └── common/                   # Shared components, charts, dialogs, formatting
+├── test/
+│   ├── widget_test.dart              # Every screen, both themes and languages
+│   └── database_test.dart            # Data survives a restart
+├── supabase/migrations/              # Server tables and security rules
+├── .github/workflows/ci.yml          # CI/CD pipeline
+├── android/ ios/ web/ linux/ macos/ windows/   # Platform projects
+├── supabase.env.example.json         # Template for Supabase keys
+├── l10n.yaml                         # Localization settings
+└── pubspec.yaml                      # Packages and app version
 ```
 
-### How it fits together
+## CI/CD
 
-- **Domain** holds plain models and pure functions with no Flutter UI code, so the streak and stats logic is easy to test.
-- **Data** exposes `HabitStore` and `SettingsController`, both `ChangeNotifier`s. Screens only talk to these classes. `HabitStore` keeps everything in memory for instant reads, writes each change to the local database in the background, and asks `CloudSync` to back it up.
-- **AppScope** passes the store and settings down the widget tree.
-- No third-party state management or chart packages are used; charts are drawn with Flutter's own widgets.
+GitHub Actions runs [.github/workflows/ci.yml](.github/workflows/ci.yml).
+
+```mermaid
+flowchart LR
+    PR["Pull request<br/>to main"] --> Check
+    Push["Push to main"] --> Check
+    Tag["Push tag v*"] --> Check
+
+    subgraph Check["Job: Analyze and test"]
+        direction TB
+        A1["flutter pub get"] --> A2["build_runner<br/>generated code up to date?"]
+        A2 --> A3["flutter analyze"] --> A4["flutter test"]
+    end
+
+    Check -->|pull request| Done([Status check on PR])
+    Check -->|main or tag| Build
+
+    subgraph Build["Job: Build Android APK"]
+        direction TB
+        B1["Write supabase.env.json<br/>from secrets"] --> B2["flutter build apk --release"]
+        B2 --> B3["Upload APK artifact"]
+    end
+
+    Build -->|tag v*| Release([GitHub Release<br/>with APK attached])
+```
+
+| Trigger | What runs |
+| --- | --- |
+| Pull request to `main` | Analyze and test |
+| Push to `main` | Analyze and test, then build the APK and upload it as a workflow artifact |
+| Push a tag like `v1.0.0` | Same as `main`, plus a GitHub Release with the APK attached |
+| Manual (**Run workflow**) | Same as a push to the selected branch |
+
+**Secrets** (optional, under **Settings → Secrets and variables → Actions**):
+
+- `SUPABASE_URL`
+- `SUPABASE_PUBLISHABLE_KEY`
+
+Without them, the built APK keeps data on the phone only.
+
+**Making a release:**
+
+```bash
+# bump `version:` in pubspec.yaml first
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The APK is signed with the debug key for now. Set up a release keystore before publishing to the Play Store.
+
+**Run the same checks locally before pushing:**
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+flutter analyze
+flutter test
+```
 
 ## Adding a translation
 
 1. Copy `lib/l10n/app_en.arb` to `lib/l10n/app_<code>.arb` and translate the values.
 2. Run `flutter gen-l10n` (or just build the app).
 3. Add the language to the language picker options in [settings_screen.dart](lib/ui/settings/settings_screen.dart).
-
-## Roadmap
-
-- [x] Save data on the device
-- [x] Account sign-in and cloud backup
-- [ ] Real reminder notifications
-- [ ] Native home screen widgets on Android and iOS
-- [ ] Ovvas Plus (unlimited widgets)
