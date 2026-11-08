@@ -87,30 +87,7 @@ The widget tests in [test/widget_test.dart](test/widget_test.dart) run the app w
 
 ## How it works
 
-```mermaid
-flowchart TD
-    User([User]) -->|tap, edit, check in| UI
-
-    subgraph App["Flutter app"]
-        UI["UI screens<br/>Today · Stats · Widgets · Settings"]
-        Scope["AppScope<br/>passes state down the tree"]
-        Store["HabitStore / SettingsController<br/>ChangeNotifier, in-memory state"]
-        Domain["Domain<br/>models, streaks, stats (pure Dart)"]
-        DB[("Drift / SQLite<br/>on the phone")]
-        Sync{"CloudSync"}
-    end
-
-    UI <--> Scope <--> Store
-    Store -->|uses| Domain
-    Store -->|1. save change, mark for upload| DB
-    Store -->|2. ask for backup| Sync
-    Sync -->|no keys set| Local["LocalOnlyCloudSync<br/>data stays on phone"]
-    Sync -->|keys set + signed in| Supa["SupabaseCloudSync"]
-    Supa -->|upload marked rows| Cloud[("Supabase<br/>Postgres + row-level security")]
-    Cloud -->|download rows changed elsewhere| Supa
-    Supa -->|merge, later edit wins| DB
-    Store -->|notifyListeners| UI
-```
+[![How Ovvas works: screens call HabitStore, which saves every change to the local Drift database first, then CloudSync backs it up to Supabase or keeps it on the phone](docs/diagrams/architecture.svg)](docs/diagrams/architecture.html)
 
 1. A screen calls a method on `HabitStore` (for example, a check-in).
 2. The store updates its in-memory state, so the screen redraws at once.
@@ -185,29 +162,7 @@ ovvas/
 
 GitHub Actions runs [.github/workflows/ci.yml](.github/workflows/ci.yml).
 
-```mermaid
-flowchart LR
-    PR["Pull request<br/>to main"] --> Check
-    Push["Push to main"] --> Check
-    Tag["Push tag v*"] --> Check
-
-    subgraph Check["Job: Analyze and test"]
-        direction TB
-        A1["flutter pub get"] --> A2["build_runner<br/>generated code up to date?"]
-        A2 --> A3["flutter analyze"] --> A4["flutter test"]
-    end
-
-    Check -->|pull request| Done([Status check on PR])
-    Check -->|main or tag| Build
-
-    subgraph Build["Job: Build Android APK"]
-        direction TB
-        B1["Write supabase.env.json<br/>from secrets"] --> B2["flutter build apk --release"]
-        B2 --> B3["Upload APK artifact"]
-    end
-
-    Build -->|tag v*| Release([GitHub Release<br/>with APK attached])
-```
+[![Ovvas CI/CD: pull requests, pushes to main and v* tags run analyze and test; main and tags build the APK; tags publish a GitHub Release](docs/diagrams/ci-cd.svg)](docs/diagrams/ci-cd.html)
 
 | Trigger | What runs |
 | --- | --- |

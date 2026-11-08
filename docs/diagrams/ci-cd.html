@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ovvas CI/CD pipeline</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f6f2;
+      --color-ink:     #15231f;
+      --color-muted:   #56645d;
+      --color-accent:  #1e6b5c;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1000px; width: 100%; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+    .notes {
+      margin-top: 1.25rem;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--color-muted);
+      max-width: 60ch;
+    }
+    svg { width: 100%; min-width: 960px; display: block; }
+    @media print {
+      .diagram-container { overflow-x: visible; }
+      svg { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">CI/CD · Ovvas</p>
+    <h1>From push to release</h1>
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ovvas-ci-cd-title ovvas-ci-cd-desc">
+        <title id="ovvas-ci-cd-title">Ovvas CI/CD pipeline</title>
+        <desc id="ovvas-ci-cd-desc">GitHub Actions pipeline for Ovvas: every pull request, push to main and v* tag runs analyze and test; main and tags then build a release APK, and tags publish it as a GitHub Release.</desc>
+        <defs>
+          <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#56645d"/></marker>
+          <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#1e6b5c"/></marker>
+          <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#94600a"/></marker>
+        </defs>
+        <rect width="100%" height="100%" fill="#f5f6f2"/>
+<!-- zones -->
+<rect x="216" y="96" width="216" height="328" rx="8" fill="rgba(21,35,31,0.02)" stroke="rgba(21,35,31,0.1)" stroke-width="0.8"/>
+<rect x="228" y="100" width="124" height="12" rx="2" fill="#f5f6f2"/>
+<text x="290.0" y="109" fill="#5c6a63" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.14em">JOB · ANALYZE AND TEST</text>
+<rect x="512" y="216" width="216" height="256" rx="8" fill="rgba(21,35,31,0.02)" stroke="rgba(21,35,31,0.1)" stroke-width="0.8"/>
+<rect x="524" y="220" width="132" height="12" rx="2" fill="#f5f6f2"/>
+<text x="590.0" y="229" fill="#5c6a63" font-size="7" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.14em">JOB · BUILD ANDROID APK</text>
+<!-- arrows -->
+<path d="M168,192 H216" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M168,256 H216" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M168,320 H216" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M324,184 V208" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M324,256 V280" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M324,328 V352" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M432,160 H528" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M432,344 H512" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M620,304 V328" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M620,376 V400" fill="none" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M728,424 H784" fill="none" stroke="#1e6b5c" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+<!-- labels -->
+<rect x="446.0" y="140" width="68" height="12" rx="2" fill="#f5f6f2"/>
+<text x="480" y="149" fill="#5c6a63" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">PULL REQUEST</text>
+<rect x="440.0" y="324" width="64" height="12" rx="2" fill="#f5f6f2"/>
+<text x="472" y="333" fill="#5c6a63" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">MAIN OR TAG</text>
+<rect x="736.0" y="404" width="40" height="12" rx="2" fill="#f5f6f2"/>
+<text x="756" y="413" fill="#5c6a63" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle" letter-spacing="0.06em">TAG V*</text>
+<!-- nodes -->
+<rect x="24" y="168" width="144" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="24" y="168" width="144" height="48" rx="6" fill="rgba(86,100,93,0.1)" stroke="#5c6a63" stroke-width="1"/>
+<text x="96.0" y="190.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Pull request</text>
+<text x="96.0" y="205.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">to main</text>
+<rect x="24" y="232" width="144" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="24" y="232" width="144" height="48" rx="6" fill="rgba(86,100,93,0.1)" stroke="#5c6a63" stroke-width="1"/>
+<text x="96.0" y="254.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Push</text>
+<text x="96.0" y="269.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">to main</text>
+<rect x="24" y="296" width="144" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="24" y="296" width="144" height="48" rx="6" fill="rgba(86,100,93,0.1)" stroke="#5c6a63" stroke-width="1"/>
+<text x="96.0" y="318.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Push tag</text>
+<text x="96.0" y="333.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">v*</text>
+<rect x="232" y="136" width="184" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="232" y="136" width="184" height="48" rx="6" fill="#ffffff" stroke="#15231f" stroke-width="1"/>
+<text x="324.0" y="158.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Install packages</text>
+<text x="324.0" y="173.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">flutter pub get</text>
+<rect x="232" y="208" width="184" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="232" y="208" width="184" height="48" rx="6" fill="#ffffff" stroke="#15231f" stroke-width="1"/>
+<text x="324.0" y="230.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Generated code current</text>
+<text x="324.0" y="245.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">build_runner</text>
+<rect x="232" y="280" width="184" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="232" y="280" width="184" height="48" rx="6" fill="#ffffff" stroke="#15231f" stroke-width="1"/>
+<text x="324.0" y="302.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Analyze</text>
+<text x="324.0" y="317.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">flutter analyze</text>
+<rect x="232" y="352" width="184" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="232" y="352" width="184" height="48" rx="6" fill="#ffffff" stroke="#15231f" stroke-width="1"/>
+<text x="324.0" y="374.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Test</text>
+<text x="324.0" y="389.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">flutter test</text>
+<rect x="528" y="136" width="184" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="528" y="136" width="184" height="48" rx="6" fill="rgba(21,35,31,0.03)" stroke="rgba(21,35,31,0.3)" stroke-width="1"/>
+<text x="620.0" y="158.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Status check</text>
+<text x="620.0" y="173.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">on the PR</text>
+<rect x="528" y="256" width="184" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="528" y="256" width="184" height="48" rx="6" fill="#ffffff" stroke="#15231f" stroke-width="1"/>
+<text x="620.0" y="278.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Write Supabase keys</text>
+<text x="620.0" y="293.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">supabase.env.json</text>
+<rect x="528" y="328" width="184" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="528" y="328" width="184" height="48" rx="6" fill="rgba(30,107,92,0.08)" stroke="#1e6b5c" stroke-width="1"/>
+<text x="620.0" y="350.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Build release APK</text>
+<text x="620.0" y="365.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">flutter build apk --release</text>
+<rect x="528" y="400" width="184" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="528" y="400" width="184" height="48" rx="6" fill="#ffffff" stroke="#15231f" stroke-width="1"/>
+<text x="620.0" y="422.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">Upload artifact</text>
+<text x="620.0" y="437.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">workflow artifact</text>
+<rect x="784" y="400" width="160" height="48" rx="6" fill="#f5f6f2"/>
+<rect x="784" y="400" width="160" height="48" rx="6" fill="rgba(21,35,31,0.03)" stroke="rgba(21,35,31,0.3)" stroke-width="1"/>
+<text x="864.0" y="422.0" fill="#15231f" font-size="12" font-weight="600" font-family="'Geist', system-ui, sans-serif" text-anchor="middle">GitHub Release</text>
+<text x="864.0" y="437.0" fill="#56645d" font-size="9" font-family="'Geist Mono', ui-monospace, monospace" text-anchor="middle">APK attached</text>
+<!-- legend -->
+<line x1="24" y1="528" x2="936" y2="528" stroke="rgba(21,35,31,0.1)" stroke-width="0.8"/>
+<text x="24" y="548" fill="#56645d" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.14em">LEGEND</text>
+<rect x="104" y="540" width="24" height="12" rx="2" fill="rgba(86,100,93,0.1)" stroke="#5c6a63" stroke-width="1"/>
+<text x="136" y="548" fill="#56645d" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.06em">TRIGGER</text>
+<rect x="196" y="540" width="24" height="12" rx="2" fill="#ffffff" stroke="#15231f" stroke-width="1"/>
+<text x="228" y="548" fill="#56645d" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.06em">STEP</text>
+<rect x="273" y="540" width="24" height="12" rx="2" fill="rgba(30,107,92,0.08)" stroke="#1e6b5c" stroke-width="1"/>
+<text x="305" y="548" fill="#56645d" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.06em">FOCAL</text>
+<rect x="355" y="540" width="24" height="12" rx="2" fill="rgba(21,35,31,0.03)" stroke="rgba(21,35,31,0.3)" stroke-width="1"/>
+<text x="387" y="548" fill="#56645d" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.06em">RESULT</text>
+<line x1="442" y1="545" x2="466" y2="545" stroke="#56645d" stroke-width="1.2" marker-end="url(#arrow)"/>
+<text x="474" y="548" fill="#56645d" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.06em">FLOW</text>
+<line x1="519" y1="545" x2="543" y2="545" stroke="#1e6b5c" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+<text x="551" y="548" fill="#56645d" font-size="8" font-family="'Geist Mono', ui-monospace, monospace" letter-spacing="0.06em">RELEASE PATH</text>
+      </svg>
+    </div>
+    <p class="notes">Pull requests stop after the checks. Pushes to main also build the APK; only a v* tag turns it into a GitHub Release.</p>
+  </div>
+</body>
+</html>
