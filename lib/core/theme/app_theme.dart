@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 
+import '../../ui/common/motion.dart';
 import 'app_colors.dart';
 
 /// Builds Material theme data from Ovvas tokens.
@@ -60,6 +62,16 @@ ThemeData buildTheme(AppColors c) {
     textTheme: text,
     extensions: [c],
     splashFactory: InkSparkle.splashFactory,
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: OvvasPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.linux: OvvasPageTransitionsBuilder(),
+        TargetPlatform.windows: OvvasPageTransitionsBuilder(),
+        TargetPlatform.fuchsia: OvvasPageTransitionsBuilder(),
+      },
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: c.background,
       foregroundColor: c.textPrimary,
@@ -88,9 +100,10 @@ ThemeData buildTheme(AppColors c) {
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: c.primary,
       foregroundColor: c.onPrimary,
-      shape: const CircleBorder(),
-      elevation: 2,
-      highlightElevation: 4,
+      shape: const StadiumBorder(),
+      elevation: 3,
+      highlightElevation: 6,
+      extendedTextStyle: text.labelLarge!.copyWith(fontSize: 15, fontWeight: FontWeight.w700),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(

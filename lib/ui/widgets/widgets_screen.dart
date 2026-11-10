@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_scope.dart';
+import '../../core/theme/habit_palette.dart';
 import '../../data/habit_store.dart';
 import '../../domain/widget_config.dart';
 import '../common/components.dart';
+import '../common/motion.dart';
 import '../common/dialogs.dart';
 import '../routes.dart';
 import 'widget_labels.dart';
@@ -57,8 +59,8 @@ class WidgetsScreen extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-        children: [
+        padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.paddingOf(context).bottom + 24),
+        children: staggered([
           Semantics(header: true, child: Text(l.yourWidgets, style: Theme.of(context).textTheme.headlineSmall)),
           const SizedBox(height: 4),
           Text(l.widgetsSubtitle, style: TextStyle(color: c.textSecondary)),
@@ -68,16 +70,18 @@ class WidgetsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SectionLabel(l.livePreview, padding: const EdgeInsets.only(bottom: 12)),
-                LayoutBuilder(builder: (context, box) {
-                  return Center(
-                    child: WidgetPreview(
-                      cellSize: (box.maxWidth / 4).clamp(56.0, 84.0),
-                      config: widgets.isNotEmpty
-                          ? widgets.first
-                          : WidgetConfig(id: 'preview', kind: WidgetKind.todayList, size: WidgetSize.medium4x2),
-                    ),
-                  );
-                }),
+                LayoutBuilder(
+                  builder: (context, box) {
+                    return Center(
+                      child: WidgetPreview(
+                        cellSize: (box.maxWidth / 4).clamp(56.0, 84.0),
+                        config: widgets.isNotEmpty
+                            ? widgets.first
+                            : WidgetConfig(id: 'preview', kind: WidgetKind.todayList, size: WidgetSize.medium4x2),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -86,8 +90,10 @@ class WidgetsScreen extends StatelessWidget {
               l.myWidgets,
               trailing: store.isPlus
                   ? null
-                  : Text(l.widgetsUsed(widgets.length, HabitStore.freeWidgetLimit),
-                      style: TextStyle(fontSize: 12, color: c.textSecondary)),
+                  : Text(
+                      l.widgetsUsed(widgets.length, HabitStore.freeWidgetLimit),
+                      style: TextStyle(fontSize: 12, color: c.textSecondary),
+                    ),
             ),
             for (final w in widgets)
               Padding(
@@ -143,7 +149,10 @@ class WidgetsScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(widgetKindName(context, kind), style: Theme.of(context).textTheme.titleMedium),
-                          Text(widgetKindDescription(context, kind), style: TextStyle(fontSize: 12, color: c.textSecondary)),
+                          Text(
+                            widgetKindDescription(context, kind),
+                            style: TextStyle(fontSize: 12, color: c.textSecondary),
+                          ),
                         ],
                       ),
                     ),
@@ -156,7 +165,7 @@ class WidgetsScreen extends StatelessWidget {
                 ),
               ),
             ),
-        ],
+        ]),
       ),
     );
   }
@@ -169,12 +178,14 @@ class _KindIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.colors;
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(color: c.mint, borderRadius: BorderRadius.circular(12)),
-      child: Icon(widgetKindIcon(kind), color: c.onMint),
-    );
+    final accent = switch (kind) {
+      WidgetKind.singleHabit => Accent.sky,
+      WidgetKind.todayList => Accent.sky,
+      WidgetKind.progressRing => Accent.violet,
+      WidgetKind.weekStrip => Accent.amber,
+      WidgetKind.monthHeatmap => Accent.rose,
+      WidgetKind.streakCounter => Accent.coral,
+    };
+    return IconBadge(widgetKindIcon(kind), accent, size: 44);
   }
 }

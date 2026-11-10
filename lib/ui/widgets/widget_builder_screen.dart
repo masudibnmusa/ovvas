@@ -4,6 +4,7 @@ import '../../app/app_scope.dart';
 import '../../core/theme/app_colors.dart';
 import '../../domain/widget_config.dart';
 import '../common/components.dart';
+import '../common/motion.dart';
 import '../common/format.dart';
 import 'widget_labels.dart';
 import 'widget_preview.dart';
@@ -27,16 +28,18 @@ class _WidgetBuilderScreenState extends State<WidgetBuilderScreen> {
   void _setKind(WidgetKind kind) {
     final ids = context.store.habits.map((h) => h.id).toList();
     final current = _config.habitIds.isEmpty ? ids : _config.habitIds;
-    _set(_config.copyWith(
-      kind: kind,
-      size: kind.sizes.first,
-      habitIds: switch (kind.habitPick) {
-        HabitPick.one => current.take(1).toList(),
-        HabitPick.many => current.take(maxHabitsFor(kind.sizes.first)).toList(),
-        HabitPick.oneOrAll || HabitPick.all => <String>[],
-      },
-      tapAction: kind.canCheck ? _config.tapAction : WidgetTapAction.openToday,
-    ));
+    _set(
+      _config.copyWith(
+        kind: kind,
+        size: kind.sizes.first,
+        habitIds: switch (kind.habitPick) {
+          HabitPick.one => current.take(1).toList(),
+          HabitPick.many => current.take(maxHabitsFor(kind.sizes.first)).toList(),
+          HabitPick.oneOrAll || HabitPick.all => <String>[],
+        },
+        tapAction: kind.canCheck ? _config.tapAction : WidgetTapAction.openToday,
+      ),
+    );
   }
 
   void _setSize(WidgetSize size) =>
@@ -105,7 +108,7 @@ class _WidgetBuilderScreenState extends State<WidgetBuilderScreen> {
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
-              children: [
+              children: staggered([
                 FieldLabel(l.widgetType),
                 Wrap(
                   spacing: 8,
@@ -124,7 +127,10 @@ class _WidgetBuilderScreenState extends State<WidgetBuilderScreen> {
                   FieldLabel(l.widgetSizeLabel),
                   PillSegmented<WidgetSize>(
                     value: _config.size,
-                    options: [for (final s in kind.sizes) (s, s == WidgetSize.large4x4 ? l.sizeLarge(s.label) : l.sizeMedium(s.label))],
+                    options: [
+                      for (final s in kind.sizes)
+                        (s, s == WidgetSize.large4x4 ? l.sizeLarge(s.label) : l.sizeMedium(s.label)),
+                    ],
                     onChanged: _setSize,
                   ),
                 ],
@@ -132,17 +138,27 @@ class _WidgetBuilderScreenState extends State<WidgetBuilderScreen> {
                   FieldLabel(
                     l.habitsShown,
                     trailing: kind.habitPick == HabitPick.many
-                        ? Text('${_config.habitIds.length}/${maxHabitsFor(_config.size)}', style: TextStyle(color: c.textSecondary))
+                        ? Text(
+                            '${_config.habitIds.length}/${maxHabitsFor(_config.size)}',
+                            style: TextStyle(color: c.textSecondary),
+                          )
                         : null,
                   ),
-                  _HabitPicker(config: _config, onToggle: _toggleHabit, onAll: () => _set(_config.copyWith(habitIds: []))),
+                  _HabitPicker(
+                    config: _config,
+                    onToggle: _toggleHabit,
+                    onAll: () => _set(_config.copyWith(habitIds: [])),
+                  ),
                 ] else
                   Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: Text(l.widgetUsesAllHabits, style: TextStyle(color: c.textSecondary)),
                   ),
                 FieldLabel(l.theme),
-                _ThemeSwatches(value: _config.theme, onChanged: (t) => _set(_config.copyWith(theme: t))),
+                _ThemeSwatches(
+                  value: _config.theme,
+                  onChanged: (t) => _set(_config.copyWith(theme: t)),
+                ),
                 FieldLabel(l.background),
                 PillSegmented<WidgetBackground>(
                   value: _config.background,
@@ -151,7 +167,8 @@ class _WidgetBuilderScreenState extends State<WidgetBuilderScreen> {
                     (WidgetBackground.gradient, l.bgGradient),
                     (WidgetBackground.transparent, l.bgTransparent),
                   ],
-                  onChanged: (b) => _set(_config.copyWith(background: b, opacity: b == WidgetBackground.transparent ? 0.6 : 1)),
+                  onChanged: (b) =>
+                      _set(_config.copyWith(background: b, opacity: b == WidgetBackground.transparent ? 0.6 : 1)),
                 ),
                 if (_config.background == WidgetBackground.transparent)
                   Row(
@@ -238,7 +255,7 @@ class _WidgetBuilderScreenState extends State<WidgetBuilderScreen> {
                     onChanged: (v) => _set(_config.copyWith(firstWeekday: v)),
                   ),
                 ],
-              ],
+              ]),
             ),
           ),
         ],
@@ -261,44 +278,46 @@ class _PreviewStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(builder: (context, box) {
-      final maxCell = (box.maxWidth - 40) / 4;
-      // Large widgets get a smaller cell so the options stay visible.
-      final cell = (config.size.rows >= 4 ? maxCell * 0.62 : maxCell).clamp(44.0, 80.0);
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF8DB7A9), kWallpaperSample, Color(0xFF3D5866)],
+    return LayoutBuilder(
+      builder: (context, box) {
+        final maxCell = (box.maxWidth - 40) / 4;
+        // Large widgets get a smaller cell so the options stay visible.
+        final cell = (config.size.rows >= 4 ? maxCell * 0.62 : maxCell).clamp(44.0, 80.0);
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF8DB7A9), kWallpaperSample, Color(0xFF3D5866)],
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Text(
-                '${context.l10n.preview.toUpperCase()} · ${widgetKindName(context, config.kind).toUpperCase()}',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1,
-                  color: AppColors.light.onPrimary.withValues(alpha: 0.9),
+          child: Column(
+            children: [
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  '${context.l10n.preview.toUpperCase()} · ${widgetKindName(context, config.kind).toUpperCase()}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                    color: AppColors.light.onPrimary.withValues(alpha: 0.9),
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            AnimatedSize(
-              duration: context.motion(200),
-              child: WidgetPreview(config: config, cellSize: cell),
-            ),
-          ],
-        ),
-      );
-    });
+              const SizedBox(height: 12),
+              AnimatedSize(
+                duration: context.motion(200),
+                child: WidgetPreview(config: config, cellSize: cell),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -318,27 +337,33 @@ class _HabitPicker extends StatelessWidget {
       runSpacing: 8,
       children: [
         if (pick == HabitPick.oneOrAll)
-          ChoiceChip(label: Text(context.l10n.allHabits), selected: config.habitIds.isEmpty, onSelected: (_) => onAll()),
+          ChoiceChip(
+            label: Text(context.l10n.allHabits),
+            selected: config.habitIds.isEmpty,
+            onSelected: (_) => onAll(),
+          ),
         for (final h in habits)
-          Builder(builder: (context) {
-            final index = config.habitIds.indexOf(h.id);
-            final selected = index >= 0;
-            final label = pick == HabitPick.many && selected ? '${index + 1}. ${h.name}' : h.name;
-            return pick == HabitPick.many
-                ? FilterChip(
-                    avatar: HabitAvatar.of(h, size: 24),
-                    label: Text(label),
-                    selected: selected,
-                    showCheckmark: false,
-                    onSelected: (_) => onToggle(h.id),
-                  )
-                : ChoiceChip(
-                    avatar: HabitAvatar.of(h, size: 24),
-                    label: Text(label),
-                    selected: selected,
-                    onSelected: (_) => onToggle(h.id),
-                  );
-          }),
+          Builder(
+            builder: (context) {
+              final index = config.habitIds.indexOf(h.id);
+              final selected = index >= 0;
+              final label = pick == HabitPick.many && selected ? '${index + 1}. ${h.name}' : h.name;
+              return pick == HabitPick.many
+                  ? FilterChip(
+                      avatar: HabitAvatar.of(h, size: 24),
+                      label: Text(label),
+                      selected: selected,
+                      showCheckmark: false,
+                      onSelected: (_) => onToggle(h.id),
+                    )
+                  : ChoiceChip(
+                      avatar: HabitAvatar.of(h, size: 24),
+                      label: Text(label),
+                      selected: selected,
+                      onSelected: (_) => onToggle(h.id),
+                    );
+            },
+          ),
       ],
     );
   }
@@ -397,7 +422,10 @@ class _ThemeSwatches extends StatelessWidget {
                           border: Border.all(color: t == value ? c.primary : Colors.transparent, width: 2.5),
                         ),
                         child: DecoratedBox(
-                          decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: c.border)),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: c.border),
+                          ),
                           child: swatch,
                         ),
                       ),
@@ -418,8 +446,8 @@ class _ThemeSwatches extends StatelessWidget {
   }
 
   Widget _swatch(Color fill) => Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(color: fill, shape: BoxShape.circle),
-      );
+    width: 40,
+    height: 40,
+    decoration: BoxDecoration(color: fill, shape: BoxShape.circle),
+  );
 }

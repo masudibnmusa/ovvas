@@ -20,7 +20,7 @@ class ReportFonts {
   final ByteData bengali;
 }
 
-const _brand = PdfColor.fromInt(0xFF0B4D3A);
+const _brand = PdfColor.fromInt(0xFF1769B8);
 const _muted = PdfColor.fromInt(0xFF6B7280);
 const _line = PdfColor.fromInt(0xFFE5E7EB);
 const _missed = PdfColor.fromInt(0xFFF1F1EC);

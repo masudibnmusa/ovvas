@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_scope.dart';
+import '../../core/theme/habit_palette.dart';
 import '../../domain/dates.dart';
 import '../../domain/habit.dart';
 import '../../domain/stats.dart';
 import '../common/charts.dart';
 import '../common/components.dart';
+import '../common/motion.dart';
 import '../common/format.dart';
 import '../routes.dart';
 
@@ -45,10 +47,10 @@ class _StatsScreenState extends State<StatsScreen> {
   }
 
   void _shift(int direction, _Period p) => setState(() {
-        _anchor = _view == StatsView.week
-            ? addDays(p.from, 7 * direction)
-            : DateTime(p.from.year, p.from.month + direction);
-      });
+    _anchor = _view == StatsView.week
+        ? addDays(p.from, 7 * direction)
+        : DateTime(p.from.year, p.from.month + direction);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +83,9 @@ class _StatsScreenState extends State<StatsScreen> {
     // While a period is still running, compare with the same number of days
     // of the previous period, so a half-finished week is not compared to a full one.
     final elapsed = daysBetween(p.from, today);
-    final prevEnd = isCurrent && addDays(p.prevFrom, elapsed).isBefore(p.prevTo) ? addDays(p.prevFrom, elapsed) : p.prevTo;
+    final prevEnd = isCurrent && addDays(p.prevFrom, elapsed).isBefore(p.prevTo)
+        ? addDays(p.prevFrom, elapsed)
+        : p.prevTo;
     final prev = stats.summarize(habits, p.prevFrom, prevEnd);
     final effectiveTo = isCurrent ? today : p.to;
     final isWeek = _view == StatsView.week;
@@ -90,8 +94,8 @@ class _StatsScreenState extends State<StatsScreen> {
     return SafeArea(
       bottom: false,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-        children: [
+        padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.paddingOf(context).bottom + 24),
+        children: staggered([
           Semantics(header: true, child: Text(l.tabStats, style: Theme.of(context).textTheme.headlineSmall)),
           const SizedBox(height: 16),
           PillSegmented<StatsView>(
@@ -108,12 +112,23 @@ class _StatsScreenState extends State<StatsScreen> {
                 icon: const Icon(Icons.chevron_left_rounded),
               ),
               Expanded(
-                child: Text(
-                  isWeek
-                      ? '${formatShortDate(context, p.from)} – ${formatShortDate(context, p.to)}'
-                      : formatMonthYear(context, p.from),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
+                child: AnimatedSwitcher(
+                  duration: context.motion(Motion.base),
+                  transitionBuilder: (child, anim) => FadeTransition(
+                    opacity: anim,
+                    child: SlideTransition(
+                      position: Tween(begin: const Offset(0, 0.3), end: Offset.zero).animate(anim),
+                      child: child,
+                    ),
+                  ),
+                  child: Text(
+                    isWeek
+                        ? '${formatShortDate(context, p.from)} – ${formatShortDate(context, p.to)}'
+                        : formatMonthYear(context, p.from),
+                    key: ValueKey((_view, p.from)),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
               ),
               IconButton(
@@ -136,31 +151,53 @@ class _StatsScreenState extends State<StatsScreen> {
           const SizedBox(height: 16),
           AppCard(
             padding: const EdgeInsets.fromLTRB(12, 16, 12, 12),
-            child: cur.scheduled == 0
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 8),
-                    child: Column(
-                      children: [
-                        Icon(Icons.bar_chart_rounded, size: 40, color: c.primary),
-                        const SizedBox(height: 8),
-                        Text(l.statsEmptyPeriod, textAlign: TextAlign.center, style: TextStyle(color: c.textSecondary)),
-                      ],
-                    ),
-                  )
-                : isWeek
+            child: AnimatedSwitcher(
+              duration: context.motion(Motion.base + 60),
+              switchInCurve: Motion.settle,
+              transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
+              layoutBuilder: (current, previous) =>
+                  Stack(alignment: Alignment.topCenter, children: [...previous, ?current]),
+              child: KeyedSubtree(
+                key: ValueKey((_view, p.from, _habitId)),
+                child: cur.scheduled == 0
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 8),
+                        child: Column(
+                          children: [
+                            Icon(Icons.bar_chart_rounded, size: 40, color: c.primary),
+                            const SizedBox(height: 8),
+                            Text(
+                              l.statsEmptyPeriod,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: c.textSecondary),
+                            ),
+                          ],
+                        ),
+                      )
+                    : isWeek
                     ? _WeekChart(summary: cur, habits: habits)
                     : _MonthHeatmap(summary: cur, habits: habits, month: p.from),
+              ),
+            ),
           ),
           if (_insight(context, stats, habits, cur, prev, p, effectiveTo) case final text?) ...[
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(color: c.mint, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                color: accentTint(context, Accent.amber).background,
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Row(
                 children: [
-                  Icon(Icons.lightbulb_outline_rounded, color: c.onMint),
+                  IconBadge(Icons.lightbulb_rounded, Accent.amber, size: 32),
                   const SizedBox(width: 10),
-                  Expanded(child: Text(text, style: TextStyle(color: c.onMint, fontWeight: FontWeight.w600))),
+                  Expanded(
+                    child: Text(
+                      text,
+                      style: TextStyle(color: accentTint(context, Accent.amber).foreground, fontWeight: FontWeight.w600),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -169,26 +206,38 @@ class _StatsScreenState extends State<StatsScreen> {
           _SummaryGrid(
             tiles: isWeek
                 ? [
-                    _tile(formatPercent(cur.rate), l.completionRate, _ppDelta(cur.rate, prev.rate), compared),
-                    _tile('${cur.done}', l.habitsCompleted, _relDelta(cur.done, prev.done), compared),
-                    _tile(cur.bestDay == null ? '–' : weekdayLong(context, cur.bestDay!.day.weekday), l.bestDay, null, compared),
+                    _tile(formatPercent(cur.rate), l.completionRate, _ppDelta(cur.rate, prev.rate), compared, (Icons.donut_large_rounded, Accent.sky)),
+                    _tile('${cur.done}', l.habitsCompleted, _relDelta(cur.done, prev.done), compared, (Icons.task_alt_rounded, Accent.violet)),
+                    _tile(
+                      cur.bestDay == null ? '–' : weekdayLong(context, cur.bestDay!.day.weekday),
+                      l.bestDay,
+                      null,
+                      compared,
+                      (Icons.emoji_events_rounded, Accent.rose),
+                    ),
                     _tile(
                       l.daysCount(habits.map(stats.currentStreak).fold(0, (a, b) => a > b ? a : b)),
                       l.currentStreak,
                       null,
                       compared,
+                      (Icons.local_fire_department_rounded, Accent.coral),
                     ),
                   ]
                 : [
-                    _tile(formatPercent(cur.rate), l.completionRate, _ppDelta(cur.rate, prev.rate), compared),
-                    _tile('${cur.perfectDays}', l.perfectDays, _relDelta(cur.perfectDays, prev.perfectDays), compared),
+                    _tile(formatPercent(cur.rate), l.completionRate, _ppDelta(cur.rate, prev.rate), compared, (Icons.donut_large_rounded, Accent.sky)),
+                    _tile('${cur.perfectDays}', l.perfectDays, _relDelta(cur.perfectDays, prev.perfectDays), compared, (Icons.star_rounded, Accent.amber)),
                     _tile(
-                      l.daysCount(habits.map((h) => stats.bestStreak(h, from: p.from, to: effectiveTo)).fold(0, (a, b) => a > b ? a : b)),
+                      l.daysCount(
+                        habits
+                            .map((h) => stats.bestStreak(h, from: p.from, to: effectiveTo))
+                            .fold(0, (a, b) => a > b ? a : b),
+                      ),
                       l.longestStreak,
                       null,
                       compared,
+                      (Icons.local_fire_department_rounded, Accent.coral),
                     ),
-                    _tile('${cur.done}', l.totalCheckIns, _relDelta(cur.done, prev.done), compared),
+                    _tile('${cur.done}', l.totalCheckIns, _relDelta(cur.done, prev.done), compared, (Icons.task_alt_rounded, Accent.violet)),
                   ],
           ),
           SectionLabel(l.byHabit),
@@ -197,16 +246,18 @@ class _StatsScreenState extends State<StatsScreen> {
               padding: const EdgeInsets.only(bottom: 10),
               child: _HabitRow(stat: s),
             ),
-        ],
+        ]),
       ),
     );
   }
 
-  StatTile _tile(String value, String label, double? delta, String compared) => StatTile(
-        value: value,
-        label: label,
-        trend: delta == null ? null : TrendBadge(delta: delta, comparedTo: compared),
-      );
+  StatTile _tile(String value, String label, double? delta, String compared, (IconData, Accent) look) => StatTile(
+    value: value,
+    label: label,
+    icon: look.$1,
+    accent: look.$2,
+    trend: delta == null ? null : TrendBadge(delta: delta, comparedTo: compared),
+  );
 
   /// Percentage-point change between two rates.
   double? _ppDelta(double? a, double? b) => (a == null || b == null) ? null : (a - b) * 100;
@@ -365,7 +416,9 @@ class _MonthHeatmap extends StatelessWidget {
             const Spacer(),
             Icon(Icons.check_rounded, size: 14, color: c.textSecondary),
             const SizedBox(width: 2),
-            Flexible(child: Text(l.perfectDay, style: TextStyle(fontSize: 12, color: c.textSecondary))),
+            Flexible(
+              child: Text(l.perfectDay, style: TextStyle(fontSize: 12, color: c.textSecondary)),
+            ),
           ],
         ),
       ],
@@ -421,23 +474,31 @@ class _HabitRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(stat.habit.name, style: Theme.of(context).textTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 6),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: LinearProgressIndicator(value: rate ?? 0, minHeight: 6),
+                Text(
+                  stat.habit.name,
+                  style: Theme.of(context).textTheme.titleMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
+                const SizedBox(height: 6),
+                AnimatedProgressBar(value: rate ?? 0, color: habitTint(context, stat.habit.colorIndex).foreground),
               ],
             ),
           ),
           const SizedBox(width: 12),
           SizedBox(
             width: 48,
-            child: Text(
-              formatPercent(rate),
-              textAlign: TextAlign.end,
-              style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary, fontSize: 16),
-            ),
+            child: rate == null
+                ? Text(
+                    formatPercent(rate),
+                    textAlign: TextAlign.end,
+                    style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary, fontSize: 16),
+                  )
+                : AnimatedNumber(
+                    value: rate,
+                    format: (v) => formatPercent(v.toDouble()),
+                    style: TextStyle(fontWeight: FontWeight.w700, color: c.textPrimary, fontSize: 16),
+                  ),
           ),
         ],
       ),
@@ -495,7 +556,10 @@ Widget _statusText(BuildContext context, DayStatus s) {
     children: [
       Icon(icon, size: 18, color: color),
       const SizedBox(width: 4),
-      Text(text, style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+      Text(
+        text,
+        style: TextStyle(color: color, fontWeight: FontWeight.w600),
+      ),
     ],
   );
 }

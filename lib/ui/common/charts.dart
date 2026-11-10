@@ -3,8 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../app/app_scope.dart';
+import '../../core/theme/habit_palette.dart';
 import '../../domain/dates.dart';
 import 'format.dart';
+import 'motion.dart';
 
 /// Circular progress ring with content in the middle.
 class ProgressRing extends StatelessWidget {
@@ -29,14 +31,17 @@ class ProgressRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     return TweenAnimationBuilder<double>(
-      tween: Tween(end: progress.clamp(0.0, 1.0)),
-      duration: context.motion(600),
+      tween: Tween(begin: 0, end: progress.clamp(0.0, 1.0)),
+      duration: context.motion(900),
       curve: Curves.easeOutCubic,
       builder: (context, value, inner) => CustomPaint(
         painter: _RingPainter(value, stroke, color ?? c.primary, trackColor ?? c.ringTrack),
         child: inner,
       ),
-      child: SizedBox.square(dimension: size, child: Center(child: child)),
+      child: SizedBox.square(
+        dimension: size,
+        child: Center(child: child),
+      ),
     );
   }
 }
@@ -58,9 +63,22 @@ class _RingPainter extends CustomPainter {
       ..strokeWidth = stroke
       ..strokeCap = StrokeCap.round;
     canvas.drawArc(inner, 0, math.pi * 2, false, paint..color = track);
-    if (value > 0) {
-      canvas.drawArc(inner, -math.pi / 2, math.pi * 2 * value, false, paint..color = color);
-    }
+    if (value <= 0) return;
+    final sweep = math.pi * 2 * value;
+    // Gradient runs from a lighter tint at the start to full color at the tip.
+    final light = Color.lerp(color, Colors.white, 0.45)!;
+    paint.shader = SweepGradient(
+      startAngle: 0,
+      endAngle: math.max(sweep, 0.01),
+      colors: [light, color],
+      transform: const GradientRotation(-math.pi / 2),
+    ).createShader(inner);
+    canvas.drawArc(inner, -math.pi / 2, sweep, false, paint);
+    // Bright dot on the leading tip.
+    paint.shader = null;
+    final tipAngle = -math.pi / 2 + sweep;
+    final tip = inner.center + Offset(math.cos(tipAngle), math.sin(tipAngle)) * (inner.width / 2);
+    canvas.drawCircle(tip, stroke * 0.22, Paint()..color = Colors.white.withValues(alpha: 0.85));
   }
 
   @override
@@ -100,44 +118,53 @@ class BarChart extends StatelessWidget {
       children: [
         SizedBox(
           height: height,
-          child: LayoutBuilder(builder: (context, constraints) {
-            final area = constraints.maxHeight - _valueSpace;
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                for (final (fraction, label) in const [(1.0, '100%'), (0.5, '50%'), (0.0, '0%')])
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: _valueSpace + area * (1 - fraction) - 8,
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: _axisWidth,
-                          height: 16,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: AlignmentDirectional.centerStart,
-                            child: Text(label, style: axisStyle),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final area = constraints.maxHeight - _valueSpace;
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  for (final (fraction, label) in const [(1.0, '100%'), (0.5, '50%'), (0.0, '0%')])
+                    Positioned(
+                      left: 0,
+                      right: 0,
+                      top: _valueSpace + area * (1 - fraction) - 8,
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: _axisWidth,
+                            height: 16,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: AlignmentDirectional.centerStart,
+                              child: Text(label, style: axisStyle),
+                            ),
                           ),
-                        ),
-                        Expanded(child: Container(height: 1, color: c.border)),
+                          Expanded(child: Container(height: 1, color: c.border)),
+                        ],
+                      ),
+                    ),
+                  Positioned.fill(
+                    left: _axisWidth,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (var i = 0; i < bars.length; i++)
+                          Expanded(
+                            child: _Bar(
+                              bar: bars[i],
+                              area: area,
+                              width: barWidth,
+                              onTap: onTap == null ? null : () => onTap!(i),
+                            ),
+                          ),
                       ],
                     ),
                   ),
-                Positioned.fill(
-                  left: _axisWidth,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (var i = 0; i < bars.length; i++)
-                        Expanded(child: _Bar(bar: bars[i], area: area, width: barWidth, onTap: onTap == null ? null : () => onTap!(i))),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          }),
+                ],
+              );
+            },
+          ),
         ),
         const SizedBox(height: 8),
         Row(
@@ -199,18 +226,31 @@ class _Bar extends StatelessWidget {
                   height: 18,
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: Text(formatPercent(v), style: TextStyle(fontSize: 12, color: c.textSecondary, fontWeight: FontWeight.w600)),
+                    child: Text(
+                      formatPercent(v),
+                      style: TextStyle(fontSize: 12, color: c.textSecondary, fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
-                AnimatedContainer(
-                  duration: context.motion(300),
+                TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0, end: v ?? 0),
+                  duration: context.motion(700),
                   curve: Curves.easeOutCubic,
-                  width: width,
-                  height: v == null ? 4 : math.max(4, (area - 4) * v),
-                  decoration: BoxDecoration(
-                    color: v == null ? c.border : c.primary,
-                    borderRadius: BorderRadius.circular(width / 2),
+                  builder: (context, t, _) => Container(
+                    width: width,
+                    height: v == null ? 4 : math.max(4, (area - 4) * t),
+                    decoration: BoxDecoration(
+                      color: v == null ? c.border : null,
+                      gradient: v == null
+                          ? null
+                          : LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [c.primary, Color.lerp(c.primary, kHabitColors[Accent.violet.colorIndex], 0.35)!],
+                            ),
+                      borderRadius: BorderRadius.circular(width / 2),
+                    ),
                   ),
                 ),
               ],
@@ -244,13 +284,7 @@ class CalendarCell {
 
 /// Month grid with weekday headers. The caller decides how each day looks.
 class MonthCalendar extends StatelessWidget {
-  const MonthCalendar({
-    super.key,
-    required this.month,
-    required this.firstWeekday,
-    required this.cellFor,
-    this.onTap,
-  });
+  const MonthCalendar({super.key, required this.month, required this.firstWeekday, required this.cellFor, this.onTap});
 
   final DateTime month;
   final int firstWeekday;
@@ -286,8 +320,7 @@ class MonthCalendar extends StatelessWidget {
         for (var r = 0; r < rows; r++)
           Row(
             children: [
-              for (var col = 0; col < 7; col++)
-                Expanded(child: _cell(context, r * 7 + col - leading + 1, count)),
+              for (var col = 0; col < 7; col++) Expanded(child: _cell(context, r * 7 + col - leading + 1, count)),
             ],
           ),
       ],
@@ -323,7 +356,10 @@ class MonthCalendar extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('$dayNumber', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: cell.textColor)),
+                      Text(
+                        '$dayNumber',
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: cell.textColor),
+                      ),
                       if (cell.marked) Icon(Icons.check_rounded, size: 11, color: cell.textColor),
                     ],
                   ),
@@ -362,6 +398,45 @@ class LegendItem extends StatelessWidget {
         const SizedBox(width: 6),
         Text(label, style: TextStyle(fontSize: 12, color: context.colors.textSecondary)),
       ],
+    );
+  }
+}
+
+/// Thin rounded bar that glides to its new value.
+class AnimatedProgressBar extends StatelessWidget {
+  const AnimatedProgressBar({super.key, required this.value, this.color, this.track, this.height = 6});
+
+  final double value;
+  final Color? color;
+  final Color? track;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(height),
+      child: SizedBox(
+        height: height,
+        child: Stack(
+          children: [
+            Positioned.fill(child: ColoredBox(color: track ?? c.ringTrack)),
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0, end: value.clamp(0.0, 1.0)),
+              duration: context.motion(Motion.slow + 200),
+              curve: Motion.settle,
+              builder: (context, v, _) => FractionallySizedBox(
+                widthFactor: v,
+                heightFactor: 1,
+                alignment: AlignmentDirectional.centerStart,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(height), color: color ?? c.primary),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

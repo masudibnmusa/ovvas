@@ -83,6 +83,22 @@ class AppLocalizationsBn extends AppLocalizations {
   String get completedLabel => 'সম্পন্ন';
 
   @override
+  String get allDoneTitle => 'আজকের সব শেষ!';
+
+  @override
+  String get allDoneBody => 'দারুণ কাজ। বিশ্রাম নিন, কাল আবার দেখা হবে।';
+
+  @override
+  String habitsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'আর $countটি বাকি',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get yourHabits => 'আপনার অভ্যাস';
 
   @override

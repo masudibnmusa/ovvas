@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_scope.dart';
+import '../../core/theme/habit_palette.dart';
 import '../../domain/dates.dart';
 import '../../domain/habit.dart';
 import '../../domain/stats.dart';
 import '../common/charts.dart';
 import '../common/components.dart';
+import '../common/motion.dart';
 import '../common/dialogs.dart';
 import '../common/format.dart';
 import '../routes.dart';
@@ -73,29 +75,45 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-        children: [
-          Row(
-            children: [
-              HabitAvatar.of(habit, size: 64),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        children: staggered([
+          Builder(
+            builder: (context) {
+              final tint = habitTint(context, habit.colorIndex);
+              return AppCard(
+                padding: const EdgeInsets.all(18),
+                gradient: LinearGradient(
+                  begin: AlignmentDirectional.topStart,
+                  end: AlignmentDirectional.bottomEnd,
+                  colors: [Color.alphaBlend(tint.background.withValues(alpha: 0.9), c.surface), c.surface],
+                ),
+                child: Row(
                   children: [
-                    Semantics(header: true, child: Text(habit.name, style: Theme.of(context).textTheme.headlineSmall)),
-                    const SizedBox(height: 4),
-                    Wrap(
-                      spacing: 8,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        StreakLabel(current),
-                        Text('· ${l.bestStreak(best)}', style: TextStyle(color: c.textSecondary, fontSize: 14)),
-                      ],
+                    HabitAvatar.of(habit, size: 72, hero: true),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Semantics(
+                            header: true,
+                            child: Text(habit.name, style: Theme.of(context).textTheme.headlineSmall),
+                          ),
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 8,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              StreakLabel(current),
+                              Text('· ${l.bestStreak(best)}', style: TextStyle(color: c.textSecondary, fontSize: 14)),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
+              );
+            },
           ),
           if (habit.isMeasured) ...[
             SectionLabel(l.todayLabel),
@@ -115,15 +133,15 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
-                  child: StatTile(value: formatPercent(overall.rate), label: l.completionRate),
+                  child: StatTile(value: formatPercent(overall.rate), label: l.completionRate, icon: Icons.donut_large_rounded, accent: Accent.sky),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: StatTile(value: '${overall.done}', label: l.checkIns),
+                  child: StatTile(value: '${overall.done}', label: l.checkIns, icon: Icons.task_alt_rounded, accent: Accent.violet),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: StatTile(value: bestDay == null ? '–' : weekdayShort(context, bestDay), label: l.bestDay),
+                  child: StatTile(value: bestDay == null ? '–' : weekdayShort(context, bestDay), label: l.bestDay, icon: Icons.emoji_events_rounded, accent: Accent.rose),
                 ),
               ],
             ),
@@ -150,11 +168,22 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
           AppCard(
             child: Column(
               children: [
-                MonthCalendar(
-                  month: month,
-                  firstWeekday: context.settings.firstWeekday,
-                  cellFor: (d) => _cell(context, habit, stats, d),
-                  onTap: (d) => _editDay(habit, d),
+                AnimatedSwitcher(
+                  duration: context.motion(Motion.base + 60),
+                  switchInCurve: Motion.settle,
+                  transitionBuilder: (child, anim) => FadeTransition(
+                    opacity: anim,
+                    child: ScaleTransition(scale: Tween(begin: 0.97, end: 1.0).animate(anim), child: child),
+                  ),
+                  layoutBuilder: (current, previous) =>
+                      Stack(alignment: Alignment.topCenter, children: [...previous, ?current]),
+                  child: MonthCalendar(
+                    key: ValueKey(month),
+                    month: month,
+                    firstWeekday: context.settings.firstWeekday,
+                    cellFor: (d) => _cell(context, habit, stats, d),
+                    onTap: (d) => _editDay(habit, d),
+                  ),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -218,7 +247,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
               label: Text(l.editHabit),
             ),
           ),
-        ],
+        ]),
       ),
     );
   }

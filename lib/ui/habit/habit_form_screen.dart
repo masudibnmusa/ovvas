@@ -5,6 +5,7 @@ import '../../core/theme/habit_palette.dart';
 import '../../domain/dates.dart';
 import '../../domain/habit.dart';
 import '../common/components.dart';
+import '../common/motion.dart';
 import '../common/dialogs.dart';
 import '../common/format.dart';
 
@@ -70,46 +71,49 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
   }
 
   void _edit(VoidCallback change) => setState(() {
-        change();
-        _dirty = true;
-      });
+    change();
+    _dirty = true;
+  });
 
   void _onNameChanged(String value) => _edit(() {
-        _nameError = null;
-        if (!_styleChosen) {
-          final s = suggestStyle(value);
-          if (s != null) {
-            _icon = s.icon;
-            _color = s.color;
-          }
-        }
-      });
+    _nameError = null;
+    if (!_styleChosen) {
+      final s = suggestStyle(value);
+      if (s != null) {
+        _icon = s.icon;
+        _color = s.color;
+      }
+    }
+  });
 
   void _applySuggestion(_Suggestion s) => _edit(() {
-        _name.text = s.name;
-        _nameError = null;
-        _goal = s.goal;
-        _target = s.target;
-        _unit.text = s.unit;
-        final style = suggestStyle(s.key);
-        if (style != null && !_styleChosen) {
-          _icon = style.icon;
-          _color = style.color;
-        }
-      });
+    _name.text = s.name;
+    _nameError = null;
+    _goal = s.goal;
+    _target = s.target;
+    _unit.text = s.unit;
+    final style = suggestStyle(s.key);
+    if (style != null && !_styleChosen) {
+      _icon = style.icon;
+      _color = style.color;
+    }
+  });
 
   void _setGoal(GoalType g) => _edit(() {
-        _goal = g;
-        _target = switch (g) {
-          GoalType.yesNo => 1,
-          GoalType.count => _target < 2 ? 8 : _target,
-          GoalType.time => _target < 5 ? 15 : _target,
-        };
-      });
+    _goal = g;
+    _target = switch (g) {
+      GoalType.yesNo => 1,
+      GoalType.count => _target < 2 ? 8 : _target,
+      GoalType.time => _target < 5 ? 15 : _target,
+    };
+  });
 
   Future<void> _addReminder() async {
     final d = context.settings.defaultReminder;
-    final picked = await showTimePicker(context: context, initialTime: TimeOfDay(hour: d.hour, minute: d.minute));
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: d.hour, minute: d.minute),
+    );
     if (picked == null) return;
     final t = ReminderTime(picked.hour, picked.minute);
     if (_reminders.contains(t)) return;
@@ -213,7 +217,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
         appBar: AppBar(title: Text(_isEdit ? l.editHabit : l.newHabit)),
         body: ListView(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-          children: [
+          children: staggered([
             FieldLabel(l.habitName),
             TextField(
               controller: _name,
@@ -230,6 +234,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 children: [
                   for (final s in _suggestions(context))
                     ActionChip(
+                      pressElevation: 0,
                       avatar: Icon(Icons.add_rounded, size: 18, color: c.primary),
                       label: Text(s.name),
                       onPressed: () => _applySuggestion(s),
@@ -237,7 +242,10 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 ],
               ),
             ],
-            FieldLabel(l.iconAndColor, trailing: HabitAvatar(iconIndex: _icon, colorIndex: _color, size: 40)),
+            FieldLabel(
+              l.iconAndColor,
+              trailing: HabitAvatar(iconIndex: _icon, colorIndex: _color, size: 40),
+            ),
             _ColorPicker(
               selected: _color,
               onSelected: (i) => _edit(() {
@@ -295,14 +303,16 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 runSpacing: 8,
                 children: [
                   for (var i = 0; i < 7; i++)
-                    Builder(builder: (context) {
-                      final w = weekdayAt(i, settings.firstWeekday);
-                      return FilterChip(
-                        label: Text(weekdayShort(context, w)),
-                        selected: _weekdays.contains(w),
-                        onSelected: (on) => _edit(() => on ? _weekdays.add(w) : _weekdays.remove(w)),
-                      );
-                    }),
+                    Builder(
+                      builder: (context) {
+                        final w = weekdayAt(i, settings.firstWeekday);
+                        return FilterChip(
+                          label: Text(weekdayShort(context, w)),
+                          selected: _weekdays.contains(w),
+                          onSelected: (on) => _edit(() => on ? _weekdays.add(w) : _weekdays.remove(w)),
+                        );
+                      },
+                    ),
                 ],
               ),
             ],
@@ -419,7 +429,7 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
                 label: Text(l.deleteHabit),
               ),
             ],
-          ],
+          ]),
         ),
         bottomNavigationBar: SafeArea(
           child: Padding(
@@ -481,19 +491,35 @@ class _ColorPicker extends StatelessWidget {
               child: SizedBox.square(
                 dimension: 48,
                 child: Center(
-                  child: AnimatedContainer(
-                    duration: context.motion(150),
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: habitTint(context, i).background,
-                      border: Border.all(
-                        color: i == selected ? c.primary : habitTint(context, i).foreground.withValues(alpha: 0.35),
-                        width: i == selected ? 3 : 1.5,
+                  child: AnimatedScale(
+                    scale: i == selected ? 1.12 : 1,
+                    duration: context.motion(Motion.base),
+                    curve: Motion.pop,
+                    child: AnimatedContainer(
+                      duration: context.motion(Motion.base),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: habitTint(context, i).background,
+                        border: Border.all(
+                          color: i == selected ? c.primary : habitTint(context, i).foreground.withValues(alpha: 0.35),
+                          width: i == selected ? 3 : 1.5,
+                        ),
+                      ),
+                      child: AnimatedSwitcher(
+                        duration: context.motion(Motion.base),
+                        transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
+                        child: i == selected
+                            ? Icon(
+                                Icons.check_rounded,
+                                key: const ValueKey(true),
+                                size: 18,
+                                color: habitTint(context, i).foreground,
+                              )
+                            : const SizedBox.shrink(key: ValueKey(false)),
                       ),
                     ),
-                    child: i == selected ? Icon(Icons.check_rounded, size: 18, color: habitTint(context, i).foreground) : null,
                   ),
                 ),
               ),
@@ -526,18 +552,27 @@ class _IconPicker extends StatelessWidget {
             selected: i == selected,
             label: l.iconNumber(i + 1),
             excludeSemantics: true,
-            child: Material(
-              color: i == selected ? tint.background : c.surface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-                side: BorderSide(color: i == selected ? c.primary : c.border, width: i == selected ? 2 : 1),
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(14),
-                onTap: () => onSelected(i),
-                child: SizedBox.square(
-                  dimension: 48,
-                  child: Icon(kHabitIcons[i], color: i == selected ? tint.foreground : c.textSecondary),
+            child: Pressable(
+              scale: 0.9,
+              child: AnimatedScale(
+                scale: i == selected ? 1.08 : 1,
+                duration: context.motion(Motion.base),
+                curve: Motion.pop,
+                child: Material(
+                  animationDuration: context.motion(Motion.base),
+                  color: i == selected ? tint.background : c.surface,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(color: i == selected ? c.primary : c.border, width: i == selected ? 2 : 1),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: () => onSelected(i),
+                    child: SizedBox.square(
+                      dimension: 48,
+                      child: Icon(kHabitIcons[i], color: i == selected ? tint.foreground : c.textSecondary),
+                    ),
+                  ),
                 ),
               ),
             ),
