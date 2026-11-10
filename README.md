@@ -4,6 +4,22 @@
 
 <p align="center">A calm, ad-free habit tracker built with Flutter.</p>
 
+<p align="center">
+  <a href="https://github.com/masudibnmusa/ovvas/actions/workflows/ci.yml"><img src="https://github.com/masudibnmusa/ovvas/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI/CD"></a>
+  <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="Version 1.0.0">
+  <a href="https://flutter.dev"><img src="https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white" alt="Flutter"></a>
+  <a href="https://dart.dev"><img src="https://img.shields.io/badge/Dart-%5E3.13-0175C2?logo=dart&logoColor=white" alt="Dart ^3.13"></a>
+  <a href="https://drift.simonbinder.eu"><img src="https://img.shields.io/badge/Drift-SQLite-003B57?logo=sqlite&logoColor=white" alt="Drift (SQLite)"></a>
+  <a href="https://supabase.com"><img src="https://img.shields.io/badge/Supabase-sync-3FCF8E?logo=supabase&logoColor=white" alt="Supabase sync"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS-lightgrey" alt="Platforms: Android, iOS">
+  <img src="https://img.shields.io/badge/languages-English%20%7C%20%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE-orange" alt="Languages: English, Bangla">
+  <img src="https://img.shields.io/badge/ads-none-success" alt="No ads">
+  <a href="https://github.com/masudibnmusa/ovvas/commits/main"><img src="https://img.shields.io/github/last-commit/masudibnmusa/ovvas" alt="Last commit"></a>
+</p>
+
 > **Status:** all screens are built. Data is saved on the phone (SQLite via Drift). Google sign-in and cloud sync use Supabase when it is configured; without it, the app keeps data on the phone only. Debug builds start with sample habits on a fresh install.
 
 ## Features
