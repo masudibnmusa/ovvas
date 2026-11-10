@@ -1,10 +1,8 @@
 <p align="center">
-  <img src="assets/brand/logo_full.png" alt="Ovvas logo" width="160">
+  <img src="assets/banners/readme/minimalist-1600x500.png" alt="Ovvas — Small habits. Big changes." width="100%">
 </p>
 
-<h1 align="center">Ovvas</h1>
-
-<p align="center">Small habits. Big changes.<br>A calm, ad-free habit tracker built with Flutter.</p>
+<p align="center">A calm, ad-free habit tracker built with Flutter.</p>
 
 > **Status:** all screens are built. Data is saved on the phone (SQLite via Drift). Google sign-in and cloud sync use Supabase when it is configured; without it, the app keeps data on the phone only. Debug builds start with sample habits on a fresh install.
 
