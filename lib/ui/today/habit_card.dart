@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_scope.dart';
+import '../../core/theme/habit_palette.dart';
 import '../../domain/habit.dart';
 import '../../domain/stats.dart';
+import '../common/charts.dart';
 import '../common/components.dart';
 import '../common/dialogs.dart';
+import '../common/motion.dart';
 import '../routes.dart';
 
 const _milestones = {7, 30, 100, 365};
@@ -42,10 +45,10 @@ class HabitCard extends StatelessWidget {
     final visual = skipped
         ? CheckVisual.skipped
         : done
-            ? CheckVisual.done
-            : habit.isMeasured
-                ? CheckVisual.add
-                : CheckVisual.empty;
+        ? CheckVisual.done
+        : habit.isMeasured
+        ? CheckVisual.add
+        : CheckVisual.empty;
 
     final checkLabel = switch (visual) {
       CheckVisual.done => l.checkUndo(habit.name),
@@ -56,26 +59,60 @@ class HabitCard extends StatelessWidget {
 
     return AppCard(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-      color: done ? Color.alphaBlend(c.mint.withValues(alpha: 0.45), c.surface) : null,
+      color: done
+          ? Color.alphaBlend(habitTint(context, habit.colorIndex).background.withValues(alpha: 0.55), c.surface)
+          : null,
       onTap: () => openHabitDetail(context, habit.id),
       onLongPress: () => _quickActions(context),
       child: Row(
         children: [
-          HabitAvatar.of(habit),
+          HabitAvatar.of(habit, hero: true),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(habit.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.titleMedium),
+                Text(
+                  habit.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
                 const SizedBox(height: 4),
                 Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   spacing: 8,
                   children: [
                     subtitle,
-                    if (done)
-                      Text(l.doneLabel, style: TextStyle(fontSize: 13, color: c.primary, fontWeight: FontWeight.w700)),
+                    AnimatedSwitcher(
+                      duration: context.motion(Motion.base),
+                      transitionBuilder: (child, anim) => FadeTransition(
+                        opacity: anim,
+                        child: ScaleTransition(
+                          scale: anim,
+                          alignment: AlignmentDirectional.centerStart.resolve(Directionality.of(context)),
+                          child: child,
+                        ),
+                      ),
+                      child: done
+                          ? Container(
+                              key: const ValueKey('done'),
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: habitTint(context, habit.colorIndex).background,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                l.doneLabel,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: habitTint(context, habit.colorIndex).foreground,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            )
+                          : const SizedBox.shrink(key: ValueKey('open')),
+                    ),
                   ],
                 ),
                 if (habit.isMeasured && !skipped) ...[
@@ -83,9 +120,9 @@ class HabitCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(value: (value / habit.target).clamp(0.0, 1.0), minHeight: 6),
+                        child: AnimatedProgressBar(
+                          value: value / habit.target,
+                          color: habitTint(context, habit.colorIndex).foreground,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -106,6 +143,13 @@ class HabitCard extends StatelessWidget {
           const SizedBox(width: 12),
           CheckButton(
             visual: visual,
+            colorIndex: habit.colorIndex,
+            burstColors: [
+              habitTint(context, habit.colorIndex).foreground,
+              kHabitColors[habit.colorIndex % kHabitColors.length],
+              c.streak,
+              c.primary,
+            ],
             semanticLabel: checkLabel,
             onPressed: () => skipped ? store.setSkipped(habit, day, false) : _check(context),
           ),
@@ -185,10 +229,12 @@ class HabitCard extends StatelessWidget {
         store.setArchived(habit.id, true);
         messenger
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(
-            content: Text(l.habitArchived(habit.name)),
-            action: SnackBarAction(label: l.undo, onPressed: () => store.setArchived(habit.id, false)),
-          ));
+          ..showSnackBar(
+            SnackBar(
+              content: Text(l.habitArchived(habit.name)),
+              action: SnackBarAction(label: l.undo, onPressed: () => store.setArchived(habit.id, false)),
+            ),
+          );
     }
   }
 }
@@ -201,13 +247,11 @@ class _Subtle extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) =>
-      Text(text, style: TextStyle(fontSize: 13, color: context.colors.textSecondary));
+  Widget build(BuildContext context) => Text(text, style: TextStyle(fontSize: 13, color: context.colors.textSecondary));
 }
 
 /// Unit shown next to a Count or Time value.
-String unitLabel(BuildContext context, Habit h) =>
-    h.goalType == GoalType.time ? context.l10n.unitMinutes : h.unit;
+String unitLabel(BuildContext context, Habit h) => h.goalType == GoalType.time ? context.l10n.unitMinutes : h.unit;
 
 enum CheckVisual { empty, done, add, skipped }
 
@@ -219,7 +263,15 @@ class CheckButton extends StatelessWidget {
     required this.onPressed,
     required this.semanticLabel,
     this.size = 56,
+    this.burstColors,
+    this.colorIndex,
   });
+
+  /// Habit color for the done fill. Null uses the brand teal.
+  final int? colorIndex;
+
+  /// Confetti colors for the moment it becomes done.
+  final List<Color>? burstColors;
 
   final CheckVisual visual;
   final VoidCallback? onPressed;
@@ -230,34 +282,74 @@ class CheckButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.colors;
     final duration = context.motion(240);
+    final solid = colorIndex == null ? null : habitSolid(context, colorIndex!);
+    final doneFill = solid?.fill ?? c.primary;
+    final onDone = solid?.onFill ?? c.onPrimary;
+    final addTint = colorIndex == null ? HabitTint(c.mint, c.onMint) : habitTint(context, colorIndex!);
     final (Color fill, Border? border, IconData? icon, Color iconColor) = switch (visual) {
-      CheckVisual.done => (c.primary, null, Icons.check_rounded, c.onPrimary),
-      CheckVisual.add => (c.mint, null, Icons.add_rounded, c.onMint),
-      CheckVisual.skipped => (Colors.transparent, Border.all(color: c.border, width: 2), Icons.skip_next_rounded, c.textSecondary),
-      CheckVisual.empty => (Colors.transparent, Border.all(color: c.textSecondary.withValues(alpha: 0.7), width: 2), null, c.textSecondary),
+      CheckVisual.done => (doneFill, null, Icons.check_rounded, onDone),
+      CheckVisual.add => (addTint.background, null, Icons.add_rounded, addTint.foreground),
+      CheckVisual.skipped => (
+        Colors.transparent,
+        Border.all(color: c.border, width: 2),
+        Icons.skip_next_rounded,
+        c.textSecondary,
+      ),
+      CheckVisual.empty => (
+        Colors.transparent,
+        Border.all(color: c.textSecondary.withValues(alpha: 0.7), width: 2),
+        null,
+        c.textSecondary,
+      ),
     };
     return Semantics(
       container: true,
       button: true,
       label: semanticLabel,
       excludeSemantics: true,
-      child: SizedBox.square(
-        dimension: size,
-        child: Material(
-          type: MaterialType.transparency,
-          child: InkResponse(
-            onTap: onPressed,
-            radius: size / 2,
-            customBorder: const CircleBorder(),
-            child: AnimatedContainer(
-              duration: duration,
-              curve: Curves.easeOutBack,
-              margin: const EdgeInsets.all(4),
-              decoration: BoxDecoration(shape: BoxShape.circle, color: fill, border: border),
-              child: AnimatedSwitcher(
+      child: Burst(
+        trigger: visual == CheckVisual.done ? true : null,
+        colors: burstColors ?? [c.primary, c.streak],
+        child: SizedBox.square(
+          dimension: size,
+          child: Material(
+            type: MaterialType.transparency,
+            child: InkResponse(
+              onTap: onPressed,
+              radius: size / 2,
+              customBorder: const CircleBorder(),
+              child: AnimatedContainer(
                 duration: duration,
-                transitionBuilder: (child, anim) => ScaleTransition(scale: anim, child: child),
-                child: Icon(icon, key: ValueKey(visual), color: iconColor, size: 28),
+                curve: Curves.easeOutBack,
+                margin: EdgeInsets.all(visual == CheckVisual.done ? 2 : 4),
+                // Every state keeps the same border, gradient and shadow shape and
+                // only changes colors, so the springy curve can overshoot safely.
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: border ?? Border.all(color: Colors.transparent, width: 2),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: visual == CheckVisual.done
+                        ? [Color.lerp(doneFill, Colors.white, 0.2)!, doneFill]
+                        : [fill, fill],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: visual == CheckVisual.done ? doneFill.withValues(alpha: 0.35) : Colors.transparent,
+                      blurRadius: 14,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: AnimatedSwitcher(
+                  duration: duration,
+                  transitionBuilder: (child, anim) => RotationTransition(
+                    turns: Tween(begin: -0.15, end: 0.0).animate(anim),
+                    child: ScaleTransition(scale: anim, child: child),
+                  ),
+                  child: Icon(icon, key: ValueKey(visual), color: iconColor, size: 28),
+                ),
               ),
             ),
           ),

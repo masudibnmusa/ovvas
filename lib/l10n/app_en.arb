@@ -68,6 +68,16 @@
     }
   },
   "completedLabel": "completed",
+  "allDoneTitle": "All done for today",
+  "allDoneBody": "Lovely work. Rest well, see you tomorrow.",
+  "habitsLeft": "{count, plural, =1{1 habit to go} other{{count} habits to go}}",
+  "@habitsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "yourHabits": "Your habits",
   "nothingScheduled": "Nothing scheduled for this day. Enjoy the rest.",
   "editingDay": "Editing {date}",

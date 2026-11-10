@@ -6,6 +6,7 @@ import 'package:ovvas/data/sample_data.dart';
 import 'package:ovvas/data/settings_controller.dart';
 import 'package:ovvas/domain/dates.dart';
 import 'package:ovvas/domain/habit.dart';
+import 'package:ovvas/ui/home_shell.dart';
 
 // Wednesday, like the mockups.
 final _now = DateTime(2026, 10, 21, 9, 30);
@@ -36,7 +37,7 @@ Future<void> _pumpApp(
   await tester.pumpAndSettle();
 }
 
-Finder _tab(IconData icon) => find.descendant(of: find.byType(NavigationBar), matching: find.byIcon(icon));
+Finder _tab(IconData icon) => find.descendant(of: find.byType(OvvasNavBar), matching: find.byIcon(icon));
 
 // tester.pageBack() looks for an English "Back" tooltip, so it fails in Bangla.
 Future<void> _back(WidgetTester tester) async {

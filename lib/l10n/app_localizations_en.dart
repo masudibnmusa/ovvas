@@ -83,6 +83,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get completedLabel => 'completed';
 
   @override
+  String get allDoneTitle => 'All done for today';
+
+  @override
+  String get allDoneBody => 'Lovely work. Rest well, see you tomorrow.';
+
+  @override
+  String habitsLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count habits to go',
+      one: '1 habit to go',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get yourHabits => 'Your habits';
 
   @override

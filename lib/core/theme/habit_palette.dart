@@ -89,3 +89,33 @@ HabitTint habitTint(BuildContext context, int colorIndex) =>
   }
   return null;
 }
+
+/// Supporting UI accents, drawn from the habit palette so the whole app
+/// shares one family of colors. Sky blue is the brand color; the others mark
+/// meaning (a tab, a kind of stat, a group of settings).
+enum Accent {
+  teal(0),
+  green(1),
+  sky(2),
+  violet(3),
+  rose(5),
+  coral(6),
+  amber(8);
+
+  const Accent(this.colorIndex);
+
+  final int colorIndex;
+}
+
+/// Soft fill plus readable foreground for an [Accent].
+HabitTint accentTint(BuildContext context, Accent a) => habitTint(context, a.colorIndex);
+
+/// Solid fill for a "done" state in a habit's own color, with the icon color
+/// to put on top of it.
+({Color fill, Color onFill}) habitSolid(BuildContext context, int colorIndex) {
+  final dark = Theme.of(context).brightness == Brightness.dark;
+  final tint = habitTint(context, colorIndex);
+  return dark
+      ? (fill: tint.foreground, onFill: AppColors.dark.background)
+      : (fill: tint.foreground, onFill: Colors.white);
+}

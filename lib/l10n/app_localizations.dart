@@ -218,6 +218,24 @@ abstract class AppLocalizations {
   /// **'completed'**
   String get completedLabel;
 
+  /// No description provided for @allDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All done for today'**
+  String get allDoneTitle;
+
+  /// No description provided for @allDoneBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Lovely work. Rest well, see you tomorrow.'**
+  String get allDoneBody;
+
+  /// No description provided for @habitsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 habit to go} other{{count} habits to go}}'**
+  String habitsLeft(int count);
+
   /// No description provided for @yourHabits.
   ///
   /// In en, this message translates to:
