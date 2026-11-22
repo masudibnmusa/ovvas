@@ -122,11 +122,19 @@ class _HabitFormScreenState extends State<HabitFormScreen> {
 
   Future<void> _pickDate({required bool start}) async {
     final today = context.store.today;
+    final yearAgo = addDays(today, -365);
+    final lastDate = addDays(today, 3650);
+    final startDay = dateOnly(_start);
+    // The picker requires firstDate <= initialDate <= lastDate.
+    final firstDate = start ? (startDay.isBefore(yearAgo) ? startDay : yearAgo) : startDay;
+    var initial = start ? startDay : dateOnly(_end ?? addDays(today, 30));
+    if (initial.isBefore(firstDate)) initial = firstDate;
+    if (initial.isAfter(lastDate)) initial = lastDate;
     final picked = await showDatePicker(
       context: context,
-      initialDate: start ? _start : (_end ?? addDays(today, 30)),
-      firstDate: start ? addDays(today, -365) : _start,
-      lastDate: addDays(today, 3650),
+      initialDate: initial,
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
     if (picked == null) return;
     _edit(() {

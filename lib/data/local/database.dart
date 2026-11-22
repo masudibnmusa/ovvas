@@ -120,6 +120,21 @@ class AppDatabase extends _$AppDatabase {
         await update(widgetConfigs).write(const WidgetConfigsCompanion(dirty: Value(true)));
       });
 
+  /// Whether any change is still waiting to be uploaded.
+  Future<bool> get hasDirtyRows async =>
+      (await (select(habits)..where((t) => t.dirty)..limit(1)).get()).isNotEmpty ||
+      (await (select(entries)..where((t) => t.dirty)..limit(1)).get()).isNotEmpty ||
+      (await (select(widgetConfigs)..where((t) => t.dirty)..limit(1)).get()).isNotEmpty;
+
+  /// Removes all habits, check-ins and widgets, and with [settings] also
+  /// settings and sync bookmarks.
+  Future<void> wipeAll({bool settings = true}) => transaction(() async {
+        await delete(habits).go();
+        await delete(entries).go();
+        await delete(widgetConfigs).go();
+        if (settings) await delete(keyValues).go();
+      });
+
   Future<bool> get isEmpty async {
     final count = habits.id.count();
     final row = await (selectOnly(habits)..addColumns([count])).getSingle();

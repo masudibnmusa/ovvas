@@ -23,6 +23,21 @@ class _OvvasAppState extends State<OvvasApp> {
   final _lightTheme = buildTheme(AppColors.light);
   final _darkTheme = buildTheme(AppColors.dark);
 
+  void _syncWeekStart() => widget.store.firstWeekday = widget.settings.firstWeekday;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncWeekStart();
+    widget.settings.addListener(_syncWeekStart);
+  }
+
+  @override
+  void dispose() {
+    widget.settings.removeListener(_syncWeekStart);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppScope(
@@ -45,9 +60,8 @@ class _OvvasAppState extends State<OvvasApp> {
             builder: (context, child) {
               // Apply the in-app text size on top of the system font size.
               final mq = MediaQuery.of(context);
-              final system = mq.textScaler.scale(14) / 14;
               return MediaQuery(
-                data: mq.copyWith(textScaler: TextScaler.linear(system * s.textScale)),
+                data: mq.copyWith(textScaler: _ExtraScale(mq.textScaler, s.textScale)),
                 child: child!,
               );
             },
@@ -57,4 +71,26 @@ class _OvvasAppState extends State<OvvasApp> {
       ),
     );
   }
+}
+
+/// The in-app text size on top of the system's scaling, keeping the
+/// system's non-linear curve (large text grows less than small text).
+class _ExtraScale extends TextScaler {
+  const _ExtraScale(this.system, this.factor);
+
+  final TextScaler system;
+  final double factor;
+
+  @override
+  double scale(double fontSize) => system.scale(fontSize) * factor;
+
+  @override
+  // ignore: deprecated_member_use
+  double get textScaleFactor => system.textScaleFactor * factor;
+
+  @override
+  bool operator ==(Object other) => other is _ExtraScale && other.system == system && other.factor == factor;
+
+  @override
+  int get hashCode => Object.hash(system, factor);
 }

@@ -7,7 +7,11 @@ import 'local/database.dart';
 
 /// User preferences, saved on the phone when a database is given.
 class SettingsController extends ChangeNotifier {
-  SettingsController({this._db});
+  SettingsController({this._db}) {
+    _defaults = _toJson();
+  }
+
+  late final Map<String, Object?> _defaults;
 
   static const textScales = [1.0, 1.15, 1.3];
   static const _key = 'settings';
@@ -23,7 +27,7 @@ class SettingsController extends ChangeNotifier {
   bool _celebrations = true;
   bool _dailySummary = false;
   bool _weeklyReport = true;
-  String _userName = 'User';
+  String _userName = '';
   ReminderTime _defaultReminder = const ReminderTime(9, 0);
   ReminderTime _quietStart = const ReminderTime(22, 0);
   ReminderTime _quietEnd = const ReminderTime(7, 0);
@@ -60,6 +64,12 @@ class SettingsController extends ChangeNotifier {
     change();
     notifyListeners();
     _db?.writeValue(_key, jsonEncode(_toJson())).catchError((Object e) => debugPrint('Saving settings failed: $e'));
+  }
+
+  /// Back to defaults, in memory only (used after all data was deleted).
+  void reset() {
+    _fromJson(_defaults);
+    notifyListeners();
   }
 
   /// Reads saved settings. Missing or unreadable values keep their defaults.

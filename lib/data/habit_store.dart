@@ -46,9 +46,15 @@ class HabitStore extends ChangeNotifier {
 
   static const freeWidgetLimit = 3;
 
+  /// Where weeks start, for weekly-quota habits. Kept in step with settings by the app.
+  int firstWeekday = DateTime.monday;
+
   DateTime now() => _clock();
   DateTime get today => dateOnly(_clock());
-  Stats get stats => Stats(entry, today: today);
+  Stats get stats => Stats(entry, today: today, firstWeekday: firstWeekday);
+
+  /// Rebuilds screens when the calendar day changes.
+  void dayChanged() => notifyListeners();
 
   // ---- Habits ----
 
@@ -217,6 +223,20 @@ class HabitStore extends ChangeNotifier {
     return cloud.syncNow();
   }
 
+  /// Deletes the cloud account (when signed in) and every habit, check-in,
+  /// widget and setting on this phone. Throws, keeping local data, if the
+  /// cloud account could not be deleted.
+  Future<void> deleteAllData() async {
+    await cloud.deleteAccount();
+    await flush();
+    await _db?.wipeAll();
+    _habits.clear();
+    _entries.clear();
+    _widgets.clear();
+    _version++;
+    notifyListeners();
+  }
+
   // ---- Export and import ----
 
   /// A copy of all habits (archived ones too) and their check-ins.
@@ -285,6 +305,13 @@ class HabitStore extends ChangeNotifier {
       _widgets
         ..clear()
         ..addAll(widgetRows.map(widgetFromRow));
+      // Never stamp an edit older than one already seen, even from another
+      // phone with a clock ahead of ours, so a later edit always wins.
+      for (final rows in [habitRows.map((r) => r.updatedAt), entryRows.map((r) => r.updatedAt), widgetRows.map((r) => r.updatedAt)]) {
+        for (final t in rows) {
+          if (t > _lastStamp) _lastStamp = t;
+        }
+      }
       notifyListeners();
       return;
     }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
@@ -25,6 +26,24 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
   /// Tabs are built on first visit, so their entrance plays when seen.
   final _visited = <int>{0};
   late final AnimationController _fade = AnimationController(vsync: this, value: 1);
+  Timer? _midnight;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleMidnight();
+  }
+
+  /// Moves every screen to the new day when the date changes.
+  void _scheduleMidnight() {
+    final now = DateTime.now();
+    final next = DateTime(now.year, now.month, now.day + 1, 0, 0, 1);
+    _midnight = Timer(next.difference(now), () {
+      if (!mounted) return;
+      context.store.dayChanged();
+      _scheduleMidnight();
+    });
+  }
 
   void _go(int i) {
     if (i == _index) return;
@@ -42,6 +61,7 @@ class _HomeShellState extends State<HomeShell> with SingleTickerProviderStateMix
 
   @override
   void dispose() {
+    _midnight?.cancel();
     _fade.dispose();
     super.dispose();
   }

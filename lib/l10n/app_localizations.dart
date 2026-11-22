@@ -2035,6 +2035,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cloud backup isn\'t set up in this version yet'**
   String get cloudNotConfigured;
+
+  /// No description provided for @greetingMorningPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get greetingMorningPlain;
+
+  /// No description provided for @greetingAfternoonPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get greetingAfternoonPlain;
+
+  /// No description provided for @greetingEveningPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get greetingEveningPlain;
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account and data were deleted.'**
+  String get accountDeleted;
+
+  /// No description provided for @deleteAccountFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete your account. Check your connection and try again.'**
+  String get deleteAccountFailed;
 }
 
 class _AppLocalizationsDelegate

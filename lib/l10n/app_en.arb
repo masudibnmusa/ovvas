@@ -668,5 +668,10 @@
   "signedInMessage": "Signed in. Backup is on.",
   "signInFailed": "Couldn't sign in. Check your internet and try again.",
   "backupFailed": "Couldn't back up. Check your internet and try again.",
-  "cloudNotConfigured": "Cloud backup isn't set up in this version yet"
+  "cloudNotConfigured": "Cloud backup isn't set up in this version yet",
+  "greetingMorningPlain": "Good morning",
+  "greetingAfternoonPlain": "Good afternoon",
+  "greetingEveningPlain": "Good evening",
+  "accountDeleted": "Your account and data were deleted.",
+  "deleteAccountFailed": "Couldn't delete your account. Check your connection and try again."
 }

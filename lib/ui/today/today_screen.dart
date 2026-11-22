@@ -54,7 +54,8 @@ class _TodayScreenState extends State<TodayScreen> {
     final stats = store.stats;
     final habits = store.habitsOn(day);
     final statuses = [for (final h in habits) stats.status(h, day)];
-    final active = statuses.where((s) => s != DayStatus.skipped).length;
+    // Rest days of weekly-quota habits don't count either.
+    final active = statuses.where((s) => s != DayStatus.skipped && s != DayStatus.notScheduled).length;
     final done = statuses.where((s) => s == DayStatus.done).length;
 
     return SafeArea(
@@ -340,11 +341,12 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final c = context.colors;
+    final named = name.isNotEmpty;
     final (greeting, IconData icon) = now.hour < 12
-        ? (l.greetingMorning(name), Icons.wb_twilight_rounded)
+        ? (named ? l.greetingMorning(name) : l.greetingMorningPlain, Icons.wb_twilight_rounded)
         : now.hour < 17
-        ? (l.greetingAfternoon(name), Icons.wb_sunny_rounded)
-        : (l.greetingEvening(name), Icons.nightlight_round);
+        ? (named ? l.greetingAfternoon(name) : l.greetingAfternoonPlain, Icons.wb_sunny_rounded)
+        : (named ? l.greetingEvening(name) : l.greetingEveningPlain, Icons.nightlight_round);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

@@ -322,5 +322,10 @@
   "signedInMessage": "সাইন ইন হয়েছে। ব্যাকআপ চালু।",
   "signInFailed": "সাইন ইন করা যায়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
   "backupFailed": "ব্যাকআপ হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।",
-  "cloudNotConfigured": "এই ভার্সনে ক্লাউড ব্যাকআপ এখনো চালু হয়নি"
+  "cloudNotConfigured": "এই ভার্সনে ক্লাউড ব্যাকআপ এখনো চালু হয়নি",
+  "greetingMorningPlain": "শুভ সকাল",
+  "greetingAfternoonPlain": "শুভ অপরাহ্ন",
+  "greetingEveningPlain": "শুভ সন্ধ্যা",
+  "accountDeleted": "আপনার অ্যাকাউন্ট ও ডেটা মুছে ফেলা হয়েছে।",
+  "deleteAccountFailed": "অ্যাকাউন্ট মোছা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"
 }

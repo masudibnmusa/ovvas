@@ -1097,4 +1097,20 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get cloudNotConfigured => 'এই ভার্সনে ক্লাউড ব্যাকআপ এখনো চালু হয়নি';
+
+  @override
+  String get greetingMorningPlain => 'শুভ সকাল';
+
+  @override
+  String get greetingAfternoonPlain => 'শুভ অপরাহ্ন';
+
+  @override
+  String get greetingEveningPlain => 'শুভ সন্ধ্যা';
+
+  @override
+  String get accountDeleted => 'আপনার অ্যাকাউন্ট ও ডেটা মুছে ফেলা হয়েছে।';
+
+  @override
+  String get deleteAccountFailed =>
+      'অ্যাকাউন্ট মোছা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।';
 }
