@@ -51,10 +51,13 @@ class HabitPeriodStat {
 
 /// Streak and completion maths. Pure: everything comes from [lookup] and [today].
 class Stats {
-  Stats(this.lookup, {required DateTime today}) : today = dateOnly(today);
+  Stats(this.lookup, {required DateTime today, this.firstWeekday = DateTime.monday}) : today = dateOnly(today);
 
   final EntryLookup lookup;
   final DateTime today;
+
+  /// Where weeks start, for "N times a week" habits.
+  final int firstWeekday;
 
   static const _maxLookback = 3660;
 
@@ -67,8 +70,32 @@ class Stats {
     final e = lookup(h.id, d);
     if (e != null && e.skipped) return DayStatus.skipped;
     if (isDone(h, e)) return DayStatus.done;
+    // A weekly-quota habit has no fixed days: an open day is a rest day
+    // unless it is needed to still reach the week's quota.
+    if (h.repeat == RepeatKind.timesPerWeek && !_neededForQuota(h, d)) return DayStatus.notScheduled;
     if (e != null && e.value > 0) return DayStatus.partial;
     return d == today ? DayStatus.pending : DayStatus.missed;
+  }
+
+  /// True when the open days from [d] to the end of its week are no more
+  /// than the check-ins still missing. Weeks cut short by the start or end
+  /// date get a proportionally smaller quota.
+  bool _neededForQuota(Habit h, DateTime d) {
+    final start = startOfWeek(d, firstWeekday);
+    var available = 0, done = 0, open = 0;
+    for (var i = 0; i < 7; i++) {
+      final x = addDays(start, i);
+      if (!h.isScheduledOn(x)) continue;
+      available++;
+      final e = lookup(h.id, x);
+      if (isDone(h, e)) {
+        done++;
+      } else if (!(e?.skipped ?? false) && !x.isBefore(d)) {
+        open++;
+      }
+    }
+    final missing = (h.timesPerWeek * available / 7).ceil() - done;
+    return missing > 0 && open <= missing;
   }
 
   /// Whether a day counts toward completion rates. Skipped days, days before

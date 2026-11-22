@@ -42,6 +42,9 @@ class SupabaseCloudSync extends CloudSync {
   static const _pageSize = 1000;
   static const _lastBackupKey = 'sync.lastBackup';
 
+  /// The account whose data this phone holds.
+  static const _ownerKey = 'sync.owner';
+
   /// Re-reads a short window before the bookmark, so rows saved by
   /// overlapping server transactions are never missed. Re-reading is harmless.
   static const _overlap = Duration(seconds: 30);
@@ -145,16 +148,57 @@ class SupabaseCloudSync extends CloudSync {
   @override
   Future<void> signOut() async {
     _debounce?.cancel();
+    // Last upload, so this account's backup has everything. Data stays on
+    // the phone; see [_claimOwner] for what happens when another account
+    // signs in.
+    await syncNow();
     await _auth.signOut();
-    // Local data stays. Mark it all for upload so the next account that
-    // signs in on this phone gets a full copy.
-    await _db.markAllDirty();
+    await _forgetSync();
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    if (_auth.currentUser == null) return;
+    _debounce?.cancel();
+    await _current;
+    // Deletes the user; their rows go with it (on delete cascade).
+    await _client.rpc('delete_my_account');
+    await _auth.signOut(scope: SignOutScope.local);
+    await _db.writeValue(_ownerKey, null);
+    await _forgetSync();
+  }
+
+  Future<void> _forgetSync() async {
     for (final t in _tables) {
       await _db.writeValue(_cursorKey(t), null);
     }
     _lastBackup = null;
     await _db.writeValue(_lastBackupKey, null);
     notifyListeners();
+  }
+
+  /// Makes sure this phone's data belongs to [userId] before syncing. When
+  /// another account signs in, the previous account's data is removed from
+  /// the phone (it is in that account's backup), so it never leaks into the
+  /// new account. If some of it never got uploaded, it is merged instead so
+  /// nothing is lost. Returns true when local data was removed.
+  Future<bool> _claimOwner(String userId) async {
+    final owner = await _db.readValue(_ownerKey);
+    if (owner == userId) return false;
+    var wiped = false;
+    if (owner != null) {
+      if (await _db.hasDirtyRows) {
+        await _db.markAllDirty();
+      } else {
+        await _db.wipeAll(settings: false);
+        wiped = true;
+      }
+      for (final t in _tables) {
+        await _db.writeValue(_cursorKey(t), null);
+      }
+    }
+    await _db.writeValue(_ownerKey, userId);
+    return wiped;
   }
 
   @override
@@ -183,8 +227,10 @@ class SupabaseCloudSync extends CloudSync {
         _again = false;
         final user = _auth.currentUser;
         if (user == null) return false;
+        final wiped = await _claimOwner(user.id);
         await _pushAll(user.id);
-        if (await _pullAll()) await onRemoteChange?.call();
+        final pulled = await _pullAll();
+        if (pulled || wiped) await onRemoteChange?.call();
       } while (_again);
       _lastBackup = DateTime.now();
       await _db.writeValue(_lastBackupKey, _lastBackup!.toUtc().toIso8601String());

@@ -331,7 +331,16 @@ class SettingsScreen extends StatelessWidget {
                     confirmLabel: l.delete,
                     destructive: true,
                   );
-                  if (ok) soon();
+                  if (!ok || !context.mounted) return;
+                  try {
+                    await store.deleteAllData();
+                  } catch (e) {
+                    debugPrint('Deleting account failed: $e');
+                    if (context.mounted) context.showSnack(l.deleteAccountFailed);
+                    return;
+                  }
+                  s.reset();
+                  if (context.mounted) context.showSnack(l.accountDeleted);
                 },
               ),
             ],

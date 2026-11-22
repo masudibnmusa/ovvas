@@ -22,6 +22,10 @@ abstract class CloudSync extends ChangeNotifier {
   /// Signs out. Data stays on the phone.
   Future<void> signOut();
 
+  /// Deletes the account and its cloud data, then signs out. Does nothing
+  /// when not signed in. Throws if the server refused.
+  Future<void> deleteAccount();
+
   /// Uploads local changes and downloads remote ones. Returns false if the
   /// sync could not finish (offline, not signed in, server error).
   Future<bool> syncNow();
@@ -44,6 +48,8 @@ class LocalOnlyCloudSync extends CloudSync {
   Future<void> signIn() async {}
   @override
   Future<void> signOut() async {}
+  @override
+  Future<void> deleteAccount() async {}
   @override
   Future<bool> syncNow() async => false;
   @override
@@ -78,6 +84,9 @@ class FakeCloudSync extends CloudSync {
     _lastBackup = null;
     notifyListeners();
   }
+
+  @override
+  Future<void> deleteAccount() => signOut();
 
   @override
   Future<bool> syncNow() async {

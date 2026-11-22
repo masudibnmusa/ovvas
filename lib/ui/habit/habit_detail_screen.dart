@@ -296,7 +296,7 @@ class _HabitDetailScreenState extends State<HabitDetailScreen> {
         fill: Colors.transparent,
         textColor: c.textSecondary.withValues(alpha: 0.55),
         semanticLabel: '$date: ${l.statusNotScheduled}',
-        enabled: false,
+        enabled: editable,
       ),
     };
   }

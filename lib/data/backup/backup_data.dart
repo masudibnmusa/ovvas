@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import '../../domain/dates.dart';
@@ -52,7 +53,7 @@ class BackupData {
         final id = m['habitId'] as String;
         if (!ids.contains(id)) continue;
         entries.putIfAbsent(id, () => {})[parseDay(m['day'] as String)] = DayEntry(
-          value: m['value'] as int,
+          value: math.max(0, m['value'] as int),
           skipped: m['skipped'] as bool,
           note: m['note'] as String? ?? '',
         );
@@ -131,18 +132,25 @@ Map<String, Object?> _habitToJson(Habit h) => {
       'archived': h.archived,
     };
 
+// The file comes from outside the app, so values are kept in range.
 Habit _habitFromJson(Map<String, dynamic> m) => Habit(
       id: m['id'] as String,
       name: m['name'] as String,
-      iconIndex: m['iconIndex'] as int,
-      colorIndex: m['colorIndex'] as int,
+      iconIndex: (m['iconIndex'] as int).abs(),
+      colorIndex: (m['colorIndex'] as int).abs(),
       goalType: GoalType.values.asNameMap()[m['goalType']] ?? GoalType.yesNo,
-      target: m['target'] as int,
+      target: math.max(1, m['target'] as int),
       unit: m['unit'] as String? ?? '',
       repeat: RepeatKind.values.asNameMap()[m['repeat']] ?? RepeatKind.everyDay,
-      weekdays: {for (final d in m['weekdays'] as List) d as int},
-      timesPerWeek: m['timesPerWeek'] as int,
-      reminders: [for (final x in m['reminders'] as List) ReminderTime((x as int) ~/ 60, x % 60)],
+      weekdays: switch ({for (final d in m['weekdays'] as List) if (d is int && d >= 1 && d <= 7) d}) {
+        final Set<int> days when days.isNotEmpty => days,
+        _ => Habit.allWeekdays,
+      },
+      timesPerWeek: (m['timesPerWeek'] as int).clamp(1, 6),
+      reminders: [
+        for (final x in m['reminders'] as List)
+          if (x is int && x >= 0 && x < 24 * 60) ReminderTime(x ~/ 60, x % 60),
+      ],
       startDate: parseDay(m['startDate'] as String),
       endDate: m['endDate'] == null ? null : parseDay(m['endDate'] as String),
       note: m['note'] as String? ?? '',

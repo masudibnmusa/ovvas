@@ -145,7 +145,7 @@ void main() {
 
   testWidgets('one tap checks a habit and a second tap undoes it', (tester) async {
     await _pumpApp(tester);
-    expect(find.text('Good morning, User'), findsOneWidget);
+    expect(find.text('Good morning'), findsOneWidget);
 
     await tester.tap(find.bySemanticsLabel('Mark Stretch as done'));
     await tester.pumpAndSettle();
@@ -184,7 +184,7 @@ void main() {
 
   testWidgets('every screen renders: dark, Bangla', (tester) async {
     await _pumpApp(tester, mode: ThemeMode.dark, lang: 'bn');
-    expect(find.text('শুভ সকাল, User'), findsOneWidget);
+    expect(find.text('শুভ সকাল'), findsOneWidget);
     await _visitEverything(tester);
   });
 

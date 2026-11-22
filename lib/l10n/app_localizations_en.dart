@@ -1115,4 +1115,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get cloudNotConfigured =>
       'Cloud backup isn\'t set up in this version yet';
+
+  @override
+  String get greetingMorningPlain => 'Good morning';
+
+  @override
+  String get greetingAfternoonPlain => 'Good afternoon';
+
+  @override
+  String get greetingEveningPlain => 'Good evening';
+
+  @override
+  String get accountDeleted => 'Your account and data were deleted.';
+
+  @override
+  String get deleteAccountFailed =>
+      'Couldn\'t delete your account. Check your connection and try again.';
 }
